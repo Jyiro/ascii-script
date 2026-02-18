@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII-SCRIPT ~ Terminal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1e2433;
+      color: #a9b7c6;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .terminal {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 500px 1fr;
+      gap: 0;
+    }
+
+    .sidebar {
+      background: #252c3d;
+      border-right: 1px solid #30363d;
+      overflow-y: auto;
+      padding: 30px;
+      scrollbar-width: thin;
+      scrollbar-color: #30363d #252c3d;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: #252c3d;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+
+    .preview-pane {
+      background: #1e2433;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      position: relative;
+      gap: 30px;
+    }
+
+    .preview-section {
+      position: relative;
+      flex: 1;
+      min-height: 300px;
+    }
+
+    #background-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+    }
+
+    .prompt {
+      color: #7ee787;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 30px 0 15px 0;
+      font-size: 15px;
+    }
+
+    .prompt::before {
+      content: '$';
+      color: #58a6ff;
+      font-weight: bold;
+    }
+
+    .prompt-text {
+      color: #ffa657;
+    }
+
+    .ascii-art-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .background-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .background-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #ascii-preview {
+      font-size: 18px;
+      line-height: 1.3;
+      white-space: pre;
+      color: #c9d1d9;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .control-panel {
+      background: #1e2433;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid #30363d;
+    }
+
+    .control-group {
+      margin-bottom: 25px;
+    }
+
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      color: #8b949e;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="color"] {
+      width: 60px;
+      height: 36px;
+      border: 1px solid #30363d;
+      background: #1e2433;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
+
+    select {
+      background: #1e2433;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select:hover {
+      border-color: #58a6ff;
+    }
+
+    .range-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: #30363d;
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #58a6ff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #79c0ff;
+    }
+
+    .range-value {
+      color: #58a6ff;
+      font-size: 13px;
+      min-width: 40px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      background: #1e2433;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 15px;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      border-radius: 4px;
+      line-height: 1.4;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #58a6ff;
+    }
+
+    textarea::placeholder {
+      color: #6e7681;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: transparent;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+      color: #58a6ff;
+    }
+
+    button.primary {
+      background: #238636;
+      border-color: #238636;
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: #2ea043;
+      border-color: #2ea043;
+    }
+
+    button.accent {
+      background: #1f6feb;
+      border-color: #1f6feb;
+      color: #fff;
+    }
+
+    button.accent:hover {
+      background: #388bfd;
+      border-color: #388bfd;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #c9d1d9;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #1f6feb;
+    }
+
+    .command-output {
+      color: #8b949e;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+
+    .command-output a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .command-output a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      height: 1px;
+      background: #30363d;
+      margin: 35px 0;
+    }
+
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      color: #c9d1d9;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #8b949e;
+      font-size: 14px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .cursor {
+      animation: blink 1s infinite;
+      color: #58a6ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <!-- Sidebar Controls -->
+    <div class="sidebar">
+      <div class="prompt">
+        <span class="prompt-text">ascii-script</span>
+        <span style="color: #8b949e;">~</span>
+        <span class="prompt-text">controls</span>
+      </div>
+
+      <div class="command-output" style="margin-top: 10px; margin-bottom: 20px;">
+        Micro-library for ASCII rendering · ESM · 5kb gzipped
+      </div>
+
+      <div class="control-panel">
+        <!-- ASCII Input -->
+        <div class="control-group">
+          <label class="control-label">ASCII Art Input</label>
+          <textarea id="ascii-input" placeholder="Paste your ASCII art here...">  █████╗ ███████╗ ██████╗██╗██╗
+ ██╔══██╗██╔════╝██╔════╝██║██║
+ ███████║███████╗██║     ██║██║
+ ██╔══██║╚════██║██║     ██║██║
+ ██║  ██║███████║╚██████╗██║██║
+ ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝</textarea>
+          <div style="margin-top: 12px;">
+            <button onclick="updateAsciiArt()" class="primary">Update Art</button>
+          </div>
+        </div>
+
+        <!-- Colors -->
+        <div class="control-group">
+          <label class="control-label">Color Configuration</label>
+          <div class="input-group">
+            <div style="flex: 1;">
+              <div style="color: #6e7681; font-size: 11px; margin-bottom: 6px;">Base Text Color</div>
+              <input type="color" id="color-picker" value="#c9d1d9">
+              <button onclick="applyColor()" style="margin-top: 8px; width: 100%;">Apply</button>
+            </div>
+            <div style="flex: 1;">
+              <div style="color: #6e7681; font-size: 11px; margin-bottom: 6px;">Gradient Base</div>
+              <input type="color" id="gradient-picker" value="#58a6ff">
+              <select id="gradient-mode" style="margin-top: 8px; width: 100%;">
+                <option value="lightness">Lightness</option>
+                <option value="saturation">Saturation</option>
+                <option value="both">Both</option>
+                <option value="hue-shift">Hue Shift</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wave Parameters -->
+        <div class="control-group">
+          <label class="control-label">Wave Parameters</label>
+          <div class="input-group" style="margin-bottom: 12px;">
+            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Amplitude</span>
+            <div class="range-input">
+              <input type="range" id="wave-amplitude" min="0" max="10" value="3" step="0.5">
+            </div>
+            <span class="range-value" id="wave-amplitude-val">3</span>
+          </div>
+          <div class="input-group">
+            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Frequency</span>
+            <div class="range-input">
+              <input type="range" id="wave-frequency" min="0.1" max="1" value="0.3" step="0.1">
+            </div>
+            <span class="range-value" id="wave-frequency-val">0.3</span>
+          </div>
+        </div>
+
+        <!-- Effect Stacking -->
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="stack-effects">
+            Stack effects (don't clear previous)
+          </label>
+        </div>
+
+        <!-- Background Parameters -->
+        <div class="control-group">
+          <label class="control-label">Background Parameters</label>
+          
+          <div style="margin-bottom: 12px;">
+            <label style="color: #6e7681; font-size: 11px; margin-bottom: 6px; display: block;">Background Color</label>
+            <input type="color" id="bg-color" value="#58a6ff">
+          </div>
+          
+          <div class="input-group" style="margin-bottom: 12px;">
+            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Scale</span>
+            <div class="range-input">
+              <input type="range" id="bg-scale" min="0.01" max="0.5" value="0.1" step="0.01">
+            </div>
+            <span class="range-value" id="bg-scale-val">0.1</span>
+          </div>
+          
+          <div class="input-group" style="margin-bottom: 12px;">
+            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Speed</span>
+            <div class="range-input">
+              <input type="range" id="bg-speed" min="0.0001" max="0.005" value="0.0005" step="0.0001">
+            </div>
+            <span class="range-value" id="bg-speed-val">0.0005</span>
+          </div>
+          
+          <div class="input-group" style="margin-bottom: 12px;">
+            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Density</span>
+            <div class="range-input">
+              <input type="range" id="bg-density" min="1" max="10" value="5" step="1">
+            </div>
+            <span class="range-value" id="bg-density-val">5</span>
+          </div>
+          
+          <div style="margin-top: 12px;">
+            <label style="color: #6e7681; font-size: 11px; margin-bottom: 6px; display: block;">Charset</label>
+            <select id="bg-charset" style="width: 100%;">
+              <option value=" ░▒▓█">Dense (░▒▓█)</option>
+              <option value=" .:-=+*#%@">Classic (.:-=+*#%@)</option>
+              <option value=" ▁▂▃▄▅▆▇█">Blocks (▁▂▃▄▅▆▇█)</option>
+              <option value=" ·∴:⁖">Dots (·∴:⁖)</option>
+              <option value=" ▖▗▘▝▚▞█">Mosaic (▖▗▘▝▚▞█)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Effects -->
+        <div class="control-group">
+          <label class="control-label">Effects</label>
+          <div class="button-group">
+            <button onclick="applyEffect('wave')">Wave</button>
+            <button onclick="applyEffect('colorCycle')">Rainbow</button>
+            <button onclick="applyEffect('gradient')">Gradient</button>
+            <button onclick="applyEffect('pulse')">Pulse</button>
+            <button onclick="applyEffect('glitch')">Glitch</button>
+            <button onclick="applyEffect('scramble')">Scramble</button>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <div class="control-group">
+          <label class="control-label">Presets</label>
+          <div class="button-group">
+            <button onclick="applyPreset('rainbow')" class="accent">Rainbow</button>
+            <button onclick="applyPreset('hologram')" class="accent">Hologram</button>
+            <button onclick="applyPreset('matrix')" class="accent">Matrix</button>
+            <button onclick="applyPreset('terminal')" class="accent">Terminal</button>
+          </div>
+        </div>
+
+        <!-- Procedural Background -->
+        <div class="control-group">
+          <label class="control-label">Procedural Background</label>
+          <div class="button-group">
+            <button onclick="applyBackground('noise')">Noise</button>
+            <button onclick="applyBackground('scanlines')">Scanlines</button>
+            <button onclick="applyBackground('particles')">Particles</button>
+            <button onclick="applyBackground('waves')">Waves</button>
+            <button onclick="applyBackground('matrix')">Matrix</button>
+            <button onclick="applyBackground('static')">Static</button>
+          </div>
+        </div>
+
+        <!-- Background Presets -->
+        <div class="control-group">
+          <label class="control-label">Background Presets</label>
+          <div class="button-group">
+            <button onclick="applyBgPreset('retro')" class="accent">Retro CRT</button>
+            <button onclick="applyBgPreset('cyber')" class="accent">Cyberpunk</button>
+            <button onclick="applyBgPreset('minimal')" class="accent">Minimal</button>
+            <button onclick="clearBackground()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Playback -->
+        <div class="control-group">
+          <label class="control-label">Playback</label>
+          <div class="button-group">
+            <button onclick="play()">▶ Play</button>
+            <button onclick="pause()">⏸ Pause</button>
+            <button onclick="reset()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="command-output" style="margin-top: 20px;">
+        💡 Tip: Try stacking Wave + Gradient
+      </div>
+
+      <div class="prompt" style="margin-top: 20px;">
+        <span class="cursor">_</span>
+      </div>
+    </div>
+
+    <!-- Preview Pane -->
+    <div class="preview-pane">
+      <!-- ASCII Art Section -->
+      <div class="preview-section">
+        <div class="prompt">
+          <span class="prompt-text">cat</span>
+          <span style="color: #8b949e;">ascii-art.txt</span>
+        </div>
+
+        <div class="ascii-art-container">
+          <pre id="ascii-preview">  █████╗ ███████╗ ██████╗██╗██╗
+ ██╔══██╗██╔════╝██╔════╝██║██║
+ ███████║███████╗██║     ██║██║
+ ██╔══██║╚════██║██║     ██║██║
+ ██║  ██║███████║╚██████╗██║██║
+ ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝</pre>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Procedural Background Section -->
+      <div class="preview-section">
+        <div class="prompt">
+          <span class="prompt-text">cat</span>
+          <span style="color: #8b949e;">background.canvas</span>
+        </div>
+
+        <div class="background-container" id="background-canvas"></div>
+
+        <div class="command-output" style="margin-top: 10px;">
+          Procedural effects render here · Noise, Scanlines, Particles
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { create } from '../src/index.js';
+
+    // Initialize ASCII-SCRIPT
+    const ascii = create();
+    let art = ascii.createArt('#ascii-preview');
+    let bg = null;
+    let currentBgEffect = null;
+    window.art = art;
+
+    // Elements
+    const colorPicker = document.getElementById('color-picker');
+    const gradientPicker = document.getElementById('gradient-picker');
+    const gradientMode = document.getElementById('gradient-mode');
+    const stackEffects = document.getElementById('stack-effects');
+    const preview = document.getElementById('ascii-preview');
+    const waveAmplitude = document.getElementById('wave-amplitude');
+    const waveFrequency = document.getElementById('wave-frequency');
+    const bgScale = document.getElementById('bg-scale');
+    const bgSpeed = document.getElementById('bg-speed');
+    const bgDensity = document.getElementById('bg-density');
+    const bgCharset = document.getElementById('bg-charset');
+    const bgColor = document.getElementById('bg-color');
+
+    // Color picker handlers
+    window.applyColor = () => {
+      preview.style.color = colorPicker.value;
+    };
+
+    // Slider handlers
+    waveAmplitude.addEventListener('input', (e) => {
+      document.getElementById('wave-amplitude-val').textContent = e.target.value;
+    });
+    
+    waveFrequency.addEventListener('input', (e) => {
+      document.getElementById('wave-frequency-val').textContent = e.target.value;
+    });
+
+    // Debounce helper - creates independent debounced functions
+    const debounce = (func, delay) => {
+      let timer = null;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func(...args), delay);
+      };
+    };
+
+    // Auto-apply gradient when color or mode changes (with debounce)
+    let currentEffect = null;
+    
+    const applyGradientDebounced = debounce(async () => {
+      if (currentEffect === 'gradient') {
+        await applyEffect('gradient');
+      }
+    }, 150);
+
+    gradientPicker.addEventListener('input', () => {
+      applyGradientDebounced();
+    });
+    
+    gradientMode.addEventListener('change', async () => {
+      if (currentEffect === 'gradient') {
+        await applyEffect('gradient');
+      }
+    });
+
+    // Background parameter listeners with debouncing
+    const debouncedApplyBackground = debounce(() => {
+      if (currentBgEffect) applyBackground(currentBgEffect);
+    }, 300);
+
+    bgScale.addEventListener('input', (e) => {
+      document.getElementById('bg-scale-val').textContent = e.target.value;
+      debouncedApplyBackground();
+    });
+    
+    bgSpeed.addEventListener('input', (e) => {
+      document.getElementById('bg-speed-val').textContent = e.target.value;
+      debouncedApplyBackground();
+    });
+    
+    bgDensity.addEventListener('input', (e) => {
+      document.getElementById('bg-density-val').textContent = e.target.value;
+      debouncedApplyBackground();
+    });
+    
+    bgCharset.addEventListener('change', () => {
+      if (currentBgEffect) applyBackground(currentBgEffect);
+    });
+    
+    bgColor.addEventListener('input', () => {
+      // Update the container's CSS color property
+      const container = document.getElementById('background-canvas');
+      if (container) {
+        container.style.color = bgColor.value;
+      }
+    });
+
+    // Update ASCII art
+    window.updateAsciiArt = () => {
+      try {
+        const input = document.getElementById('ascii-input').value;
+        
+        // Stop and destroy current instance
+        const oldId = art.id;
+        art.stop();
+        ascii.destroy(oldId);
+        
+        // Update text content
+        preview.textContent = input;
+        
+        // Create new instance
+        art = ascii.createArt('#ascii-preview');
+        window.art = art;
+        
+        console.log('✓ Art updated');
+      } catch (error) {
+        console.error('✗ Error updating art:', error);
+      }
+    };
+
+    // Apply effects
+    window.applyEffect = async (effectName) => {
+      console.log(`[DEBUG] Applying effect: ${effectName}`, new Date().toLocaleTimeString());
+      
+      if (!stackEffects.checked) {
+        // Reset clears effects and stops animation
+        art.reset();
+      } else {
+        // In stack mode, just stop to prevent conflicts
+        art.stop();
+      }
+      
+      // Track current effect for auto-apply
+      currentEffect = effectName;
+      
+      const amplitude = parseFloat(waveAmplitude.value);
+      const frequency = parseFloat(waveFrequency.value);
+      const gradientColor = gradientPicker.value;
+      const mode = gradientMode.value;
+      
+      switch(effectName) {
+        case 'wave':
+          await art.wave({ amplitude, frequency });
+          break;
+        case 'colorCycle':
+          await art.colorCycle({ speed: 0.002, spread: 5 });
+          break;
+        case 'gradient':
+          await art.colorGradient({ baseColor: gradientColor, mode, speed: 0.001 });
+          break;
+        case 'pulse':
+          await art.pulse();
+          break;
+        case 'glitch':
+          await art.glitch({ intensity: 0.15 });
+          break;
+        case 'scramble':
+          await art.scramble({ speed: 0.05 });
+          break;
+      }
+      
+      art.play();
+      console.log(`[DEBUG] Effect ${effectName} applied successfully`);
+    };
+
+    // Apply presets
+    window.applyPreset = async (presetName) => {
+      art.reset();
+      await art.preset(presetName);
+      art.play();
+    };
+
+    // Playback controls
+    window.play = () => art.play();
+    window.pause = () => art.pause();
+    window.reset = () => art.reset();
+
+    // Background effects
+    window.applyBackground = async (effectName) => {
+      currentBgEffect = effectName;
+      
+      // Clear previous background completely
+      if (bg) {
+        try {
+          bg.destroy();
+        } catch (e) {
+          console.warn('Could not destroy previous background:', e);
+        }
+        bg = null;
+      }
+
+      // Clear DOM and wait for cleanup
+      const container = document.getElementById('background-canvas');
+      container.innerHTML = '';
+      
+      // Wait for cleanup to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const scale = parseFloat(bgScale.value);
+      const speed = parseFloat(bgSpeed.value);
+      const density = parseInt(bgDensity.value);
+      const charset = bgCharset.value;
+      
+      // Apply color to container before creating background
+      container.style.color = bgColor.value;
+      
+      bg = ascii.createBackground(container, {
+        cols: 120,
+        rows: 30,
+        cellWidth: 6,
+        cellHeight: 13,
+        charset: charset
+      });
+
+      switch(effectName) {
+        case 'noise':
+          bg.setGenerator((x, y, time) => {
+            const t = time * speed;
+            const value = (
+              Math.sin(x * scale + t) * 
+              Math.cos(y * scale + t * 0.7) +
+              Math.sin((x + y) * scale * 0.5 + t * 1.3)
+            ) * 0.5 + 0.5;
+            return value;
+          });
+          break;
+
+        case 'scanlines':
+          bg.setGenerator((x, y, time) => {
+            const t = time * speed * 4;
+            const scanline = Math.sin((y * scale * 10 + t * 10) * Math.PI * 2) * 0.5 + 0.5;
+            const fade = Math.sin(x * scale + t) * 0.2 + 0.3;
+            return scanline * fade;
+          });
+          break;
+
+        case 'particles':
+          const particles = [];
+          for (let i = 0; i < density; i++) {
+            particles.push({
+              x: Math.random() * 120,
+              y: Math.random() * 30,
+              vx: (Math.random() - 0.5) * scale * 5,
+              vy: (Math.random() - 0.5) * scale * 5
+            });
+          }
+          
+          bg.setGenerator((x, y, time) => {
+            let value = 0;
+            const t = time * speed * 20;
+            
+            for (const p of particles) {
+              const px = (p.x + p.vx * t) % 120;
+              const py = (p.y + p.vy * t) % 30;
+              const dx = x - (px < 0 ? px + 120 : px);
+              const dy = y - (py < 0 ? py + 30 : py);
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              
+              if (dist < density) {
+                value += Math.max(0, 1 - dist / density);
+              }
+            }
+            
+            return Math.min(1, value);
+          });
+          break;
+
+        case 'waves':
+          bg.setGenerator((x, y, time) => {
+            const t = time * speed * 2;
+            const wave1 = Math.sin(x * scale + t) * 0.5;
+            const wave2 = Math.cos(y * scale + t * 0.7) * 0.5;
+            return (wave1 + wave2 + 1) * 0.5;
+          });
+          break;
+
+        case 'matrix':
+          // Matrix rain effect - characters falling down
+          const columns = [];
+          for (let i = 0; i < 120; i++) {
+            columns.push({
+              y: Math.random() * -30,
+              speed: 0.3 + Math.random() * 0.7
+            });
+          }
+          
+          bg.setGenerator((x, y, time) => {
+            const t = time * speed * 30;
+            const col = columns[x % 120];
+            
+            // Calculate column position
+            const colY = (col.y + col.speed * t) % 40;
+            
+            // Distance from column head
+            const distFromHead = y - colY;
+            
+            // Bright at head, fading trail
+            if (distFromHead < 0 && distFromHead > -10) {
+              const fadePos = -distFromHead / 10;
+              return Math.exp(-fadePos * 3) * 0.9;
+            }
+            
+            return 0;
+          });
+          break;
+
+        case 'static':
+          bg.setGenerator((x, y, time) => {
+            return Math.random() * (Math.sin(time * speed * 50) * 0.5 + 0.5);
+          });
+          break;
+      }
+
+      bg.play();
+    };
+
+    // Background presets
+    window.applyBgPreset = async (preset) => {
+      switch(preset) {
+        case 'retro':
+          bgScale.value = 0.1;
+          bgSpeed.value = 0.002;
+          bgDensity.value = 5;
+          bgCharset.value = ' .:-=+*#%@';
+          bgColor.value = '#00ff00';
+          break;
+        case 'cyber':
+          bgScale.value = 0.05;
+          bgSpeed.value = 0.003;
+          bgDensity.value = 8;
+          bgCharset.value = ' ▁▂▃▄▅▆▇█';
+          bgColor.value = '#ff00ff';
+          break;
+        case 'minimal':
+          bgScale.value = 0.2;
+          bgSpeed.value = 0.0001;
+          bgDensity.value = 3;
+          bgCharset.value = ' ·∴:⁖';
+          bgColor.value = '#58a6ff';
+          break;
+      }
+      
+      // Update displayed values
+      document.getElementById('bg-scale-val').textContent = bgScale.value;
+      document.getElementById('bg-speed-val').textContent = bgSpeed.value;
+      document.getElementById('bg-density-val').textContent = bgDensity.value;
+      
+      await applyBackground('noise');
+    };
+
+    window.clearBackground = () => {
+      if (bg) {
+        try {
+          bg.destroy();
+        } catch (e) {
+          console.warn('Could not destroy background:', e);
+        }
+        bg = null;
+      }
+      const container = document.getElementById('background-canvas');
+      container.innerHTML = '';
+      currentBgEffect = null;
+    };
+
+    // Auto-start with gradient
+    setTimeout(async () => {
+      currentEffect = 'gradient';
+      await art.colorGradient({ baseColor: '#58a6ff', mode: 'lightness', speed: 0.001 });
+      art.play();
+    }, 300);
+  </script>
+</body>
+</html>

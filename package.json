@@ -1,0 +1,41 @@
+{
+  "name": "ascii-script",
+  "version": "0.1.0",
+  "description": "Micro-librería para render y animación ASCII en el DOM",
+  "type": "module",
+  "main": "./dist/ascii-script.js",
+  "module": "./dist/ascii-script.js",
+  "exports": {
+    ".": {
+      "import": "./dist/ascii-script.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src --ext .js",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "ascii",
+    "animation",
+    "effects",
+    "dom",
+    "canvas",
+    "art"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "happy-dom": "^20.6.1",
+    "jsdom": "^28.1.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

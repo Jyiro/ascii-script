@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII-SCRIPT - ASCII Art Showcase</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .art-container {
+      border: 2px solid #0f0;
+      padding: 20px;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .art-title {
+      color: #0ff;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    pre {
+      margin: 0;
+    }
+
+    #hero-logo {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    #banner {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    #name {
+      font-size: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center; color: #0ff;">ASCII ART SHOWCASE</h1>
+
+  <div class="showcase">
+    <!-- Hero Logo -->
+    <div>
+      <h3 class="art-title">Wave + Color Cycle</h3>
+      <div class="art-container">
+        <pre id="hero-logo">
+   ___    ______ ______  __  ____       ___    ____  ______
+  /   |  / ____// ____/ /  |/  _/      /   |  / __ \/_  __/
+ / /| | //__   / /     / /|_/ /       / /| | / /_/ / / /   
+/ ___ |/ ___/ / /___  / /  / /       / ___ |/ _, _/ / /    
+/_/  |_/_/    \____/ /_/  /_/       /_/  |_/_/ |_| /_/     
+        </pre>
+      </div>
+    </div>
+
+    <!-- Glitch Effect -->
+    <div>
+      <h3 class="art-title">Glitch + Pulse</h3>
+      <div class="art-container">
+        <pre id="banner">
+╦ ╦╔═╗╦  ╔═╗╔═╗╦═╗╔═╗╔╦╗
+╠═╣║ ║║  ║ ║║ ╦╠╦╝╠═╣║║║
+╩ ╩╚═╝╩═╝╚═╝╚═╝╩╚═╩ ╩╩ ╩
+        </pre>
+      </div>
+    </div>
+
+    <!-- Typewriter Effect -->
+    <div>
+      <h3 class="art-title">Terminal Typing</h3>
+      <div class="art-container">
+        <div id="name">JONAS</div>
+      </div>
+    </div>
+
+    <!-- Perspective Effect -->
+    <div>
+      <h3 class="art-title">3D Perspective</h3>
+      <div class="art-container">
+        <pre id="perspective-art">
+ ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   
+▐░░░░░░░░░░░▌▐░░░░░░░░░░▌  
+▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌ 
+▐░▌       ▐░▌▐░▌       ▐░▌ 
+▐░▌       ▐░▌▐░▌       ▐░▌ 
+▐░▌       ▐░▌▐░▌       ▐░▌ 
+▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌ 
+▐░░░░░░░░░░░▌▐░░░░░░░░░░▌  
+ ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀   
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { create } from '../src/index.js';
+
+    const ascii = create();
+
+    // Hero logo - Rainbow effect
+    const hero = ascii.createArt('#hero-logo');
+    await hero.preset('rainbow', {
+      wave: { amplitude: 2, frequency: 0.2, speed: 0.001 },
+      color: { speed: 0.003, spread: 8 }
+    });
+    hero.play();
+
+    // Banner - Hologram effect
+    const banner = ascii.createArt('#banner');
+    await banner.preset('hologram');
+    banner.play();
+
+    // Name - Terminal effect
+    const name = ascii.createText('#name');
+    await name.preset('terminal');
+    name.play();
+
+    // Perspective
+    const perspective = ascii.createArt('#perspective-art');
+    await perspective.perspective({
+      rotateX: 15,
+      rotateY: 20,
+      speed: 0.002
+    });
+    perspective.play();
+  </script>
+</body>
+</html>
