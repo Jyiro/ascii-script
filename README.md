@@ -2,9 +2,9 @@
 
 > Micro-librería JavaScript para renderizado y animación de arte ASCII en el DOM
 
+[![npm version](https://img.shields.io/npm/v/@jyiro/ascii-script)](https://www.npmjs.com/package/@jyiro/ascii-script)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bundle Size](https://img.shields.io/badge/bundle-~5kb-brightgreen)](https://bundlephobia.com)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://www.npmjs.com/package/ascii-script)
 
 ![alt text](ASCII-SCRIPT.gif)
 
@@ -30,21 +30,21 @@ Librería ligera e independiente de frameworks para crear impresionantes animaci
 ### Instalación
 
 ```bash
-npm install ascii-script
+npm install @jyiro/ascii-script
 ```
 
 O usando CDN:
 
 ```html
 <script type="module">
-  import { create } from 'https://unpkg.com/ascii-script';
+  import { create } from 'https://unpkg.com/@jyiro/ascii-script';
 </script>
 ```
 
 ### Uso Básico
 
 ```javascript
-import { create } from 'ascii-script';
+import { create } from '@jyiro/ascii-script';
 
 // Inicializar motor
 const ascii = create();
@@ -378,7 +378,7 @@ Or using CDN:
 ### Basic Usage
 
 ```javascript
-import { create } from 'ascii-script';
+import { create } from '@jyiro/ascii-script';
 
 // Initialize engine
 const ascii = create();
