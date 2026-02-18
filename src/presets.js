@@ -78,7 +78,7 @@ export async function rainbow(config = {}) {
   return [
     new WaveEffect({
       amplitude: 3,
-      frequency: 0.3,
+      frequency: 0.8,
       speed: 0.002,
       ...config.wave
     }),

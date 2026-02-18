@@ -29,8 +29,16 @@
     "canvas",
     "art"
   ],
-  "author": "",
+  "author": "Jyiro <https://github.com/Jyiro>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jyiro/ascii-script.git"
+  },
+  "homepage": "https://github.com/Jyiro/ascii-script#readme",
+  "bugs": {
+    "url": "https://github.com/Jyiro/ascii-script/issues"
+  },
   "devDependencies": {
     "eslint": "^8.56.0",
     "happy-dom": "^20.6.1",

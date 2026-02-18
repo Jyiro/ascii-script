@@ -6,24 +6,26 @@
 [![Bundle Size](https://img.shields.io/badge/bundle-~5kb-brightgreen)](https://bundlephobia.com)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://www.npmjs.com/package/ascii-script)
 
+![alt text](ASCII-SCRIPT.gif)
+
 **[English](#english-version) | Español**
 
 Librería ligera e independiente de frameworks para crear impresionantes animaciones de arte ASCII en el navegador.
 
-## ✨ Características
+## Características
 
-- 🎨 **Efectos Variados** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain y más
-- 🎭 **Presets Listos** - Combinaciones preconfiguradas de efectos (hologram, rainbow, terminal, decrypt)
-- 📦 **Bundle Minúsculo** - ~5kb core + efectos cargados bajo demanda (3-5kb cada uno)
-- ⚡ **Rendimiento 60fps** - Aceleración GPU vía transformaciones CSS, fallback canvas para arte grande
-- 🔌 **Agnóstico de Framework** - JavaScript puro, funciona con React, Vue, Svelte o vanilla
-- 🎯 **Auto-Detección** - Detecta y formatea automáticamente arte ASCII multi-línea
-- 🌈 **Extensible** - Sistema de plugins para efectos personalizados
-- 🎮 **API Intuitiva** - Métodos encadenables y configuración sencilla
-- 📱 **Responsive** - Se adapta a diferentes tamaños de pantalla
-- 🚀 **Zero Dependencies** - Sin dependencias externas
+- **Efectos Variados** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain y más
+- **Presets Listos** - Combinaciones preconfiguradas de efectos (hologram, rainbow, terminal, decrypt)
+- **Bundle Minúsculo** - ~5kb core + efectos cargados bajo demanda (3-5kb cada uno)
+- **Rendimiento 60fps** - Aceleración GPU vía transformaciones CSS, fallback canvas para arte grande
+- **Agnóstico de Framework** - JavaScript puro, funciona con React, Vue, Svelte o vanilla
+- **Auto-Detección** - Detecta y formatea automáticamente arte ASCII multi-línea
+- **Extensible** - Sistema de plugins para efectos personalizados
+- **API Intuitiva** - Métodos encadenables y configuración sencilla
+- **Responsive** - Se adapta a diferentes tamaños de pantalla
+- **Zero Dependencies** - Sin dependencias externas
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### Instalación
 
@@ -71,7 +73,7 @@ logo.play();
 </pre>
 ```
 
-## 🎨 Efectos Disponibles
+## Efectos Disponibles
 
 ### Efectos para Arte ASCII
 
@@ -101,7 +103,7 @@ Fondos basados en canvas:
 - **Scanlines** - Efecto de monitor CRT
 - **Particles** - Partículas de caracteres ASCII
 
-## 🎭 Presets
+## Presets
 
 Combinaciones preconfiguradas de efectos para uso rápido:
 
@@ -122,9 +124,9 @@ await logo.preset('rainbow');
 await text.preset('terminal');
 ```
 
-## 📖 Ejemplos
+## Ejemplos
 
-### 🚀 Ejecutar Ejemplos en Vivo
+### Ejecutar Ejemplos en Vivo
 
 Para ver los ejemplos interactivos en tu navegador:
 
@@ -148,11 +150,6 @@ npm run dev
   - Terminal interactivo completo con todos los efectos
   - Controles en tiempo real
   - Showcase de todos los presets
-
-- **ASCII Art Showcase** - `examples/ascii-art/showcase.html`
-  - Galería de efectos para arte ASCII
-  - Logos y banners animados
-  - Efectos combinados
 
 ### Ejemplos de Código
 
@@ -235,15 +232,13 @@ async function animate() {
 animate();
 ```
 
-## 📚 Documentación
+## Documentación
 
 - [Referencia API Completa](docs/api.md) - Documentación detallada de todas las APIs y métodos
-- **Ejemplos en Vivo** - Ejecuta `npm run dev` y abre:
-  - `examples/enhanced.html` - Terminal interactivo completo
-  - `examples/ascii-art/showcase.html` - Galería de efectos
+- **Ejemplos en Vivo** - Ejecuta `npm run dev` y abre `examples/enhanced.html` - Terminal interactivo completo
 - Guía de Efectos Personalizados - Ver sección "Uso Avanzado" en [docs/api.md](docs/api.md)
 
-## 🛠️ Desarrollo
+## Desarrollo
 
 ```bash
 # Instalar dependencias
@@ -265,7 +260,7 @@ npm run test:ui
 npm run lint
 ```
 
-## 🌟 Casos de Uso
+## Casos de Uso
 
 - **Landing Pages** - Headers con arte ASCII llamativo
 - **Portafolios de Desarrolladores** - Efectos estilo terminal
@@ -276,7 +271,7 @@ npm run lint
 - **Presentaciones** - Slides con animaciones únicas
 - **Arte Interactivo** - Instalaciones web creativas
 
-## 🎯 Compatibilidad de Navegadores
+## Compatibilidad de Navegadores
 
 | Navegador | Versión Mínima |
 |-----------|---------------|
@@ -287,7 +282,7 @@ npm run lint
 
 Requiere soporte ES2022+.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 ascii-script/
@@ -312,7 +307,7 @@ ascii-script/
 └── docs/                  # Documentación
 ```
 
-## 🚀 Rendimiento
+## Rendimiento
 
 - **Bundle core**: ~5kb gzipped
 - **Efectos**: 3-5kb cada uno (carga bajo demanda)
@@ -321,11 +316,11 @@ ascii-script/
 - **Fallback automático**: Canvas para arte grande (>100 líneas)
 - **Tree-shaking**: Importa solo lo que uses
 
-## 📄 Licencia
+## Licencia
 
 MIT © 2026
 
-## 🤝 Contribuir
+## Contribuir
 
 ¡Las contribuciones son bienvenidas! Por favor:
 
@@ -335,9 +330,9 @@ MIT © 2026
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 🙏 Créditos
+## Créditos
 
-Creado con ❤️ para la comunidad de arte ASCII.
+Creado para la comunidad de arte ASCII.
 
 ---
 
@@ -351,20 +346,20 @@ Creado con ❤️ para la comunidad de arte ASCII.
 
 Framework-independent library for creating stunning ASCII art animations in the browser.
 
-## ✨ Features
+## Features
 
-- 🎨 **Rich Effects** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain, and more
-- 🎭 **Ready-to-use Presets** - Pre-configured effect combinations (hologram, rainbow, terminal, decrypt)
-- 📦 **Tiny Bundle** - ~5kb core + lazy-loaded effects (3-5kb each)
-- ⚡ **60fps Performance** - GPU-accelerated via CSS transforms, canvas fallback for large art
-- 🔌 **Framework-Agnostic** - Pure JavaScript, works with React, Vue, Svelte, or vanilla
-- 🎯 **Auto-Detection** - Automatically detects and formats multi-line ASCII art
-- 🌈 **Extensible** - Plugin system for custom effects
-- 🎮 **Intuitive API** - Chainable methods and simple configuration
-- 📱 **Responsive** - Adapts to different screen sizes
-- 🚀 **Zero Dependencies** - No external dependencies
+- **Rich Effects** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain, and more
+- **Ready-to-use Presets** - Pre-configured effect combinations (hologram, rainbow, terminal, decrypt)
+- **Tiny Bundle** - ~5kb core + lazy-loaded effects (3-5kb each)
+- **60fps Performance** - GPU-accelerated via CSS transforms, canvas fallback for large art
+- **Framework-Agnostic** - Pure JavaScript, works with React, Vue, Svelte, or vanilla
+- **Auto-Detection** - Automatically detects and formats multi-line ASCII art
+- **Extensible** - Plugin system for custom effects
+- **Intuitive API** - Chainable methods and simple configuration
+- **Responsive** - Adapts to different screen sizes
+- **Zero Dependencies** - No external dependencies
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -412,7 +407,7 @@ logo.play();
 </pre>
 ```
 
-## 🎨 Available Effects
+## Available Effects
 
 ### ASCII Art Effects
 
@@ -442,7 +437,7 @@ Canvas-based backgrounds:
 - **Scanlines** - CRT monitor effect
 - **Particles** - ASCII character particles
 
-## 🎭 Presets
+## Presets
 
 Pre-configured effect combinations for quick use:
 
@@ -463,9 +458,9 @@ await logo.preset('rainbow');
 await text.preset('terminal');
 ```
 
-## 📖 Examples
+## Examples
 
-### 🚀 Run Live Examples
+### Run Live Examples
 
 To view interactive examples in your browser:
 
@@ -489,11 +484,6 @@ npm run dev
   - Complete interactive terminal with all effects
   - Real-time controls
   - Showcase of all presets
-
-- **ASCII Art Showcase** - `examples/ascii-art/showcase.html`
-  - Gallery of ASCII art effects
-  - Animated logos and banners
-  - Combined effects
 
 ### Code Examples
 
@@ -576,15 +566,13 @@ async function animate() {
 animate();
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [Complete API Reference](docs/api.md) - Detailed documentation of all APIs and methods
-- **Live Examples** - Run `npm run dev` and open:
-  - `examples/enhanced.html` - Complete interactive terminal
-  - `examples/ascii-art/showcase.html` - Effects gallery
+- **Live Examples** - Run `npm run dev` and open `examples/enhanced.html` - Complete interactive terminal
 - Custom Effects Guide - See "Advanced Usage" section in [docs/api.md](docs/api.md)
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Install dependencies
@@ -606,7 +594,7 @@ npm run test:ui
 npm run lint
 ```
 
-## 🌟 Use Cases
+## Use Cases
 
 - **Landing Pages** - Eye-catching ASCII art headers
 - **Developer Portfolios** - Terminal-style effects
@@ -617,7 +605,7 @@ npm run lint
 - **Presentations** - Slides with unique animations
 - **Interactive Art** - Creative web installations
 
-## 🎯 Browser Support
+## Browser Support
 
 | Browser | Minimum Version |
 |---------|----------------|
@@ -628,7 +616,7 @@ npm run lint
 
 Requires ES2022+ support.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ascii-script/
@@ -653,7 +641,7 @@ ascii-script/
 └── docs/                  # Documentation
 ```
 
-## 🚀 Performance
+## Performance
 
 - **Core bundle**: ~5kb gzipped
 - **Effects**: 3-5kb each (lazy loaded)
@@ -662,11 +650,11 @@ ascii-script/
 - **Automatic fallback**: Canvas for large art (>100 lines)
 - **Tree-shaking**: Import only what you use
 
-## 📄 License
+## License
 
 MIT © 2026
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please:
 
@@ -676,6 +664,6 @@ Contributions are welcome! Please:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 🙏 Credits
+## Credits
 
-Created with ❤️ for the ASCII art community.
+Created for the ASCII art community.

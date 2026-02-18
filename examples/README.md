@@ -36,24 +36,6 @@ Complete interactive terminal with all ASCII-SCRIPT effects.
 http://localhost:5173/examples/enhanced.html
 ```
 
-### 2. ASCII Art Showcase
-**Archivo / File:** `ascii-art/showcase.html`
-
-Galería de efectos aplicados a arte ASCII.
-
-Gallery of effects applied to ASCII art.
-
-**Incluye / Includes:**
-- 🎨 Logos y banners animados
-- 🌈 Efectos de color (cycle, gradient)
-- 🌊 Efectos de movimiento (wave, pulse, perspective)
-- 🎭 Efectos combinados
-
-**Acceso directo / Direct access:**
-```
-http://localhost:5173/examples/ascii-art/showcase.html
-```
-
 ## 💡 Tips
 
 ### Ver en Pantalla Completa / View in Fullscreen
