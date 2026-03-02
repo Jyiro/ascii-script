@@ -15,6 +15,11 @@ dist/
 build/
 *.log
 
+# Deployment
+.vercel/
+vercel.json
+
 # OS files
 .DS_Store
 Thumbs.db
+.vercel

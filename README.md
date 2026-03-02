@@ -10,6 +10,8 @@
 
 **[English](#english-version) | Español**
 
+**🎮 [Demo Interactivo](https://asciiscript.vercel.app)** | **📦 [NPM](https://www.npmjs.com/package/@jyiro/ascii-script)** | **📖 [Documentación](./docs/api.md)**
+
 Librería ligera e independiente de frameworks para crear impresionantes animaciones de arte ASCII en el navegador.
 
 ## Características
@@ -575,6 +577,8 @@ Creado para la comunidad de arte ASCII.
 > Lightweight JavaScript library for ASCII art rendering and animation in the DOM
 
 **English | [Español](#ascii-script)**
+
+**🎮 [Interactive Demo](https://asciiscript.vercel.app)** | **📦 [NPM](https://www.npmjs.com/package/@jyiro/ascii-script)** | **📖 [Documentation](./docs/api.md)**
 
 Framework-independent library for creating stunning ASCII art animations in the browser.
 
