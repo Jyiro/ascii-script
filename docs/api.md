@@ -47,6 +47,446 @@ await logo.colorCycle();
 logo.play();
 ```
 
+## 🤖 Para Asistentes de IA
+
+**LEE ESTO CON ATENCIÓN antes de generar código:**
+
+### Hechos Fundamentales
+
+1. **Esta es JavaScript vanilla**, NO es una biblioteca de React
+2. **No existen hooks**: No hay `useEffect`, `useState`, `useRef` en esta librería
+3. **Solo existen 5 presets**: `rainbow`, `hologram`, `matrix`, `terminal`, `decrypt`
+4. **Los nombres de métodos son fijos**: `.play()` NO `.start()`, `create()` NO `new AsciiScript()`
+
+### Implementación Correcta Completa
+
+```javascript
+// ✅ IMPLEMENTACIÓN CORRECTA
+import { create } from 'ascii-script';
+
+// 1. Crear motor
+const ascii = create();
+
+// 2. Crear instancia de arte
+const art = ascii.createArt('#logo');
+
+// 3. Aplicar efectos (elige UN enfoque):
+
+// ENFOQUE A: Usar un preset (solo existen estos 5)
+await art.preset('rainbow');    // ✅ Válido
+await art.preset('hologram');   // ✅ Válido
+await art.preset('matrix');     // ✅ Válido
+await art.preset('terminal');   // ✅ Válido
+await art.preset('decrypt');    // ✅ Válido
+
+// ENFOQUE B: Encadenar efectos individuales
+await art.wave({ amplitude: 3, frequency: 0.8 });
+await art.colorCycle({ speed: 0.002 });
+
+// 4. Iniciar animación
+art.play();
+
+// 5. Controlar reproducción
+art.pause();  // Pausar
+art.play();   // Reanudar
+art.reset();  // Detener y reiniciar
+
+// 6. Limpiar
+ascii.destroy(art.id);
+```
+
+### Métodos Disponibles (Lista Completa)
+
+**Motor (Engine):**
+- `create(config)` - Crear motor (NO usar `new`)
+- `createArt(selector, config)` - Crear instancia de arte ASCII
+- `createBackground(selector, config)` - Crear fondo procedural
+- `destroy(id)` - Destruir instancia
+- `start()` - Iniciar motor (solo si autoStart: false)
+- `stop()` - Detener motor
+
+**Instancia de Arte (Art Instance):**
+- `play()` - Reproducir animación (NO existe `.start()`)
+- `pause()` - Pausar animación
+- `reset()` - Reiniciar animación
+- `preset(name)` - Aplicar preset (solo: 'rainbow', 'hologram', 'matrix', 'terminal', 'decrypt')
+
+**Efectos Individuales:**
+- `wave(options)` - Onda sinusoidal
+- `colorCycle(options)` - Ciclo de color arcoíris
+- `pulse(options)` - Pulsación
+- `perspective(options)` - Transformación 3D
+- `colorGradient(options)` - Gradiente de color
+- `scramble(options)` - Scramble aleatorio
+- `reveal(options)` - Revelación secuencial
+- `glitch(options)` - Glitch digital
+- `typewriter(options)` - Efecto máquina de escribir
+- `matrixRain(options)` - Lluvia estilo Matrix
+
+### ❌ Lo que NO existe
+
+```javascript
+// ❌ NO existe useEffect - Esto NO es React
+useEffect(() => {
+  const ascii = create();
+}, []);
+
+// ❌ NO existe .start() en instancias de arte
+art.start(); // ❌ Incorrecto
+art.play();  // ✅ Correcto
+
+// ❌ NO existe constructor con `new`
+const ascii = new AsciiScript(); // ❌ Incorrecto
+const ascii = create();          // ✅ Correcto
+
+// ❌ NO existen presets inventados
+await art.preset('glow');      // ❌ No existe
+await art.preset('rainbow');   // ✅ Correcto
+
+// ❌ NO existe .initialize()
+ascii.initialize(); // ❌ Incorrecto
+ascii.start();      // ✅ Correcto (solo si autoStart: false)
+
+// ❌ NO existe .setEffect()
+art.setEffect('wave'); // ❌ Incorrecto
+await art.wave();      // ✅ Correcto
+```
+
+### Integración con Frameworks
+
+**React:**
+```javascript
+import { useEffect, useRef } from 'react';
+import { create } from 'ascii-script';
+
+function AsciiLogo() {
+  const logoRef = useRef(null);
+  const asciiRef = useRef(null);
+  const artRef = useRef(null);
+
+  useEffect(() => {
+    if (!logoRef.current) return;
+
+    // Crear motor una vez
+    asciiRef.current = create();
+    artRef.current = asciiRef.current.createArt(logoRef.current);
+
+    // Aplicar efecto
+    artRef.current.preset('rainbow').then(() => {
+      artRef.current.play();
+    });
+
+    // Cleanup
+    return () => {
+      if (asciiRef.current && artRef.current) {
+        asciiRef.current.destroy(artRef.current.id);
+      }
+    };
+  }, []);
+
+  return <pre ref={logoRef}>ASCII ART HERE</pre>;
+}
+```
+
+**Vue 3:**
+```vue
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { create } from 'ascii-script';
+
+const logoRef = ref(null);
+let ascii = null;
+let art = null;
+
+onMounted(async () => {
+  ascii = create();
+  art = ascii.createArt(logoRef.value);
+  await art.preset('rainbow');
+  art.play();
+});
+
+onUnmounted(() => {
+  if (ascii && art) {
+    ascii.destroy(art.id);
+  }
+});
+</script>
+
+<template>
+  <pre ref="logoRef">ASCII ART HERE</pre>
+</template>
+```
+
+**Svelte:**
+```svelte
+<script>
+  import { onMount, onDestroy } from 'svelte';
+  import { create } from 'ascii-script';
+
+  let logoElement;
+  let ascii;
+  let art;
+
+  onMount(async () => {
+    ascii = create();
+    art = ascii.createArt(logoElement);
+    await art.preset('rainbow');
+    art.play();
+  });
+
+  onDestroy(() => {
+    if (ascii && art) {
+      ascii.destroy(art.id);
+    }
+  });
+</script>
+
+<pre bind:this={logoElement}>ASCII ART HERE</pre>
+```
+
+### Preguntas Frecuentes
+
+**P: ¿Cómo creo un preset personalizado?**
+R: No puedes. Encadena efectos manualmente:
+```javascript
+await art.wave();
+await art.colorGradient({ baseColor: '#00ff00' });
+art.play();
+```
+
+**P: ¿Puedo usar `.start()` en lugar de `.play()`?**
+R: No. El método es `.play()`. No existe `.start()` en instancias de arte.
+
+**P: ¿Cómo inicializo el motor?**
+R: Usa `const ascii = create()`. Se auto-inicia por defecto.
+
+**P: ¿Funciona con TypeScript?**
+R: Sí, pero los tipos son inferidos. La librería está escrita en JS vanilla.
+
+**P: ¿Puedo aplicar múltiples presets?**
+R: No. Los presets son configuraciones completas. Para múltiples efectos, usa efectos individuales.
+
+---
+
+## 🤖 For AI Assistants
+
+**READ THIS CAREFULLY before generating code:**
+
+### Core Facts
+
+1. **This is vanilla JavaScript**, NOT a React library
+2. **No hooks exist**: There is no `useEffect`, `useState`, `useRef` in this library
+3. **Only 5 presets exist**: `rainbow`, `hologram`, `matrix`, `terminal`, `decrypt`
+4. **Method names are fixed**: `.play()` NOT `.start()`, `create()` NOT `new AsciiScript()`
+
+### Complete Correct Implementation
+
+```javascript
+// ✅ CORRECT IMPLEMENTATION
+import { create } from 'ascii-script';
+
+// 1. Create engine
+const ascii = create();
+
+// 2. Create art instance
+const art = ascii.createArt('#logo');
+
+// 3. Apply effects (choose ONE approach):
+
+// APPROACH A: Use a preset (only these 5 exist)
+await art.preset('rainbow');    // ✅ Valid
+await art.preset('hologram');   // ✅ Valid
+await art.preset('matrix');     // ✅ Valid
+await art.preset('terminal');   // ✅ Valid
+await art.preset('decrypt');    // ✅ Valid
+
+// APPROACH B: Chain individual effects
+await art.wave({ amplitude: 3, frequency: 0.8 });
+await art.colorCycle({ speed: 0.002 });
+
+// 4. Start animation
+art.play();
+
+// 5. Control playback
+art.pause();  // Pause
+art.play();   // Resume
+art.reset();  // Stop and restart
+
+// 6. Cleanup
+ascii.destroy(art.id);
+```
+
+### Available Methods (Complete List)
+
+**Engine:**
+- `create(config)` - Create engine (do NOT use `new`)
+- `createArt(selector, config)` - Create ASCII art instance
+- `createBackground(selector, config)` - Create procedural background
+- `destroy(id)` - Destroy instance
+- `start()` - Start engine (only if autoStart: false)
+- `stop()` - Stop engine
+
+**Art Instance:**
+- `play()` - Play animation (`.start()` does NOT exist)
+- `pause()` - Pause animation
+- `reset()` - Reset animation
+- `preset(name)` - Apply preset (only: 'rainbow', 'hologram', 'matrix', 'terminal', 'decrypt')
+
+**Individual Effects:**
+- `wave(options)` - Sine wave
+- `colorCycle(options)` - Rainbow color cycle
+- `pulse(options)` - Pulsation
+- `perspective(options)` - 3D transformation
+- `colorGradient(options)` - Color gradient
+- `scramble(options)` - Random scramble
+- `reveal(options)` - Sequential reveal
+- `glitch(options)` - Digital glitch
+- `typewriter(options)` - Typewriter effect
+- `matrixRain(options)` - Matrix-style rain
+
+### ❌ What Does NOT Exist
+
+```javascript
+// ❌ useEffect does NOT exist - This is NOT React
+useEffect(() => {
+  const ascii = create();
+}, []);
+
+// ❌ .start() does NOT exist on art instances
+art.start(); // ❌ Wrong
+art.play();  // ✅ Correct
+
+// ❌ Constructor with `new` does NOT exist
+const ascii = new AsciiScript(); // ❌ Wrong
+const ascii = create();          // ✅ Correct
+
+// ❌ Invented presets do NOT exist
+await art.preset('glow');      // ❌ Doesn't exist
+await art.preset('rainbow');   // ✅ Correct
+
+// ❌ .initialize() does NOT exist
+ascii.initialize(); // ❌ Wrong
+ascii.start();      // ✅ Correct (only if autoStart: false)
+
+// ❌ .setEffect() does NOT exist
+art.setEffect('wave'); // ❌ Wrong
+await art.wave();      // ✅ Correct
+```
+
+### Framework Integration
+
+**React:**
+```javascript
+import { useEffect, useRef } from 'react';
+import { create } from 'ascii-script';
+
+function AsciiLogo() {
+  const logoRef = useRef(null);
+  const asciiRef = useRef(null);
+  const artRef = useRef(null);
+
+  useEffect(() => {
+    if (!logoRef.current) return;
+
+    // Create engine once
+    asciiRef.current = create();
+    artRef.current = asciiRef.current.createArt(logoRef.current);
+
+    // Apply effect
+    artRef.current.preset('rainbow').then(() => {
+      artRef.current.play();
+    });
+
+    // Cleanup
+    return () => {
+      if (asciiRef.current && artRef.current) {
+        asciiRef.current.destroy(artRef.current.id);
+      }
+    };
+  }, []);
+
+  return <pre ref={logoRef}>ASCII ART HERE</pre>;
+}
+```
+
+**Vue 3:**
+```vue
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { create } from 'ascii-script';
+
+const logoRef = ref(null);
+let ascii = null;
+let art = null;
+
+onMounted(async () => {
+  ascii = create();
+  art = ascii.createArt(logoRef.value);
+  await art.preset('rainbow');
+  art.play();
+});
+
+onUnmounted(() => {
+  if (ascii && art) {
+    ascii.destroy(art.id);
+  }
+});
+</script>
+
+<template>
+  <pre ref="logoRef">ASCII ART HERE</pre>
+</template>
+```
+
+**Svelte:**
+```svelte
+<script>
+  import { onMount, onDestroy } from 'svelte';
+  import { create } from 'ascii-script';
+
+  let logoElement;
+  let ascii;
+  let art;
+
+  onMount(async () => {
+    ascii = create();
+    art = ascii.createArt(logoElement);
+    await art.preset('rainbow');
+    art.play();
+  });
+
+  onDestroy(() => {
+    if (ascii && art) {
+      ascii.destroy(art.id);
+    }
+  });
+</script>
+
+<pre bind:this={logoElement}>ASCII ART HERE</pre>
+```
+
+### Frequently Asked Questions
+
+**Q: How do I create a custom preset?**
+A: You can't. Chain effects manually:
+```javascript
+await art.wave();
+await art.colorGradient({ baseColor: '#00ff00' });
+art.play();
+```
+
+**Q: Can I use `.start()` instead of `.play()`?**
+A: No. The method is `.play()`. `.start()` does not exist on art instances.
+
+**Q: How do I initialize the engine?**
+A: Use `const ascii = create()`. It auto-starts by default.
+
+**Q: Does it work with TypeScript?**
+A: Yes, but types are inferred. The library is written in vanilla JS.
+
+**Q: Can I apply multiple presets?**
+A: No. Presets are complete configurations. For multiple effects, use individual effects.
+
 ## API Core
 
 ### `create(config)`

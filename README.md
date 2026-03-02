@@ -105,23 +105,104 @@ Fondos basados en canvas:
 
 ## Presets
 
-Combinaciones preconfiguradas de efectos para uso rápido:
+Combinaciones preconfiguradas de efectos para uso rápido.
+
+### ⚠️ Presets Disponibles (Lista Completa)
+
+**IMPORTANTE:** Solo existen estos 5 presets. No inventes nombres nuevos.
+
+| Preset | Efectos Incluidos | Ideal Para |
+|--------|-------------------|------------|
+| `rainbow` | wave + colorCycle | Logos animados con color |
+| `hologram` | glitch + pulse | Efectos futuristas |
+| `matrix` | matrixRain + scanlines | Estética Matrix/Cyberpunk |
+| `terminal` | typewriter + scanlines | Texto estilo terminal retro |
+| `decrypt` | scramble → reveal | Animaciones de descifrado |
+
+### Uso de Presets
 
 ```javascript
-// Efecto holográfico (glitch + pulse)
+// ✅ CORRECTO: Usar uno de los 5 presets disponibles
+await logo.preset('rainbow');
 await logo.preset('hologram');
-
-// Efecto Matrix (matrix rain + scanlines)
 await text.preset('matrix');
-
-// Animación de desencriptado (scramble → reveal)
+await text.preset('terminal');
 await text.preset('decrypt');
 
-// Onda arcoíris (wave + color cycle)
-await logo.preset('rainbow');
+// ❌ INCORRECTO: Estos presets NO existen
+await logo.preset('cool');      // ❌ No existe
+await logo.preset('custom');    // ❌ No existe
+await logo.preset('neon');      // ❌ No existe
+```
 
-// Terminal retro (typewriter + scanlines)
-await text.preset('terminal');
+### Crear Combinaciones Personalizadas
+
+Si necesitas una combinación diferente, encadena efectos manualmente:
+
+```javascript
+// Combinación personalizada
+await logo.wave({ amplitude: 5 });
+await logo.colorGradient({ baseColor: '#00ff00' });
+logo.play();
+```
+
+## ⛔ Errores Comunes (AI Hallucinations)
+
+Esta librería es **JavaScript puro (vanilla)**. No confundir con:
+
+### ❌ Lo que NO existe en esta librería:
+
+```javascript
+// ❌ NO existe useEffect - Esto NO es React
+useEffect(() => {
+  const ascii = create();
+}, []);
+
+// ❌ NO existe el método .start() - Usar .play()
+art.start(); // ❌ Incorrecto
+art.play();  // ✅ Correcto
+
+// ❌ NO existe constructor con `new`
+const ascii = new AsciiScript(); // ❌ Incorrecto
+const ascii = create();          // ✅ Correcto
+
+// ❌ NO existen presets inventados
+await art.preset('glow');      // ❌ No existe
+await art.preset('rainbow');   // ✅ Correcto
+
+// ❌ NO existe método .initialize()
+ascii.initialize(); // ❌ Incorrecto
+ascii.start();      // ✅ Correcto (si autoStart: false)
+```
+
+### ✅ API Correcta:
+
+```javascript
+// ✅ Importar
+import { create } from '@jyiro/ascii-script';
+
+// ✅ Crear instancia
+const ascii = create();
+
+// ✅ Crear arte
+const art = ascii.createArt('#logo');
+
+// ✅ Aplicar preset válido
+await art.preset('rainbow'); // Solo: rainbow, hologram, matrix, terminal, decrypt
+
+// ✅ O aplicar efectos individuales
+await art.wave();
+await art.colorCycle();
+
+// ✅ Reproducir
+art.play();
+
+// ✅ Controlar
+art.pause();
+art.reset();
+
+// ✅ Destruir
+ascii.destroy(art.id);
 ```
 
 ## Ejemplos
@@ -141,15 +222,17 @@ npm install
 npm run dev
 
 # 4. Abrir en el navegador
-# El servidor te mostrará la URL (generalmente http://localhost:5173)
+# Visita http://localhost:5173 (redirige automáticamente al estudio)
 ```
 
-**Ejemplos Disponibles:**
+**Estudio Interactivo:**
 
-- **Enhanced Terminal** - `examples/enhanced.html`
-  - Terminal interactivo completo con todos los efectos
-  - Controles en tiempo real
-  - Showcase de todos los presets
+Al abrir `http://localhost:5173` serás redirigido automáticamente al **ASCII-SCRIPT Studio** (`examples/enhanced.html`):
+
+- ✨ Interfaz interactiva con todos los efectos disponibles
+- 🎮 Controles en tiempo real para experimentar
+- 🎨 Showcase completo de los 5 presets
+- 📦 Dos capas de animación simultánea (texto + procedurales)
 
 ### Ejemplos de Código
 
@@ -235,8 +318,157 @@ animate();
 ## Documentación
 
 - [Referencia API Completa](docs/api.md) - Documentación detallada de todas las APIs y métodos
+- [Guía de Presets](docs/PRESETS.md) - Documentación exhaustiva de todos los presets disponibles
 - **Ejemplos en Vivo** - Ejecuta `npm run dev` y abre `examples/enhanced.html` - Terminal interactivo completo
 - Guía de Efectos Personalizados - Ver sección "Uso Avanzado" en [docs/api.md](docs/api.md)
+
+## 🤖 For AI Assistants
+
+**READ THIS CAREFULLY before generating code:**
+
+### Core Facts
+
+1. **This is vanilla JavaScript**, NOT a React library
+2. **No hooks exist**: No `useEffect`, `useState`, `useRef`
+3. **Only 5 presets exist**: `rainbow`, `hologram`, `matrix`, `terminal`, `decrypt`
+4. **Method names are fixed**: `.play()` NOT `.start()`, `create()` NOT `new AsciiScript()`
+
+### Complete Working Example
+
+```javascript
+// ✅ CORRECT IMPLEMENTATION
+import { create } from '@jyiro/ascii-script';
+
+// 1. Create engine
+const ascii = create();
+
+// 2. Create art instance
+const art = ascii.createArt('#logo');
+
+// 3. Apply effects (choose ONE approach):
+
+// APPROACH A: Use a preset (only these 5 exist)
+await art.preset('rainbow');    // ✅ Valid
+await art.preset('hologram');   // ✅ Valid
+await art.preset('matrix');     // ✅ Valid
+await art.preset('terminal');   // ✅ Valid
+await art.preset('decrypt');    // ✅ Valid
+
+// APPROACH B: Chain individual effects
+await art.wave({ amplitude: 3, frequency: 0.8 });
+await art.colorCycle({ speed: 0.002 });
+
+// 4. Start animation
+art.play();
+
+// 5. Control playback
+art.pause();  // Pause
+art.play();   // Resume
+art.reset();  // Stop and reset
+
+// 6. Cleanup
+ascii.destroy(art.id);
+```
+
+### Available Effects (Complete List)
+
+**ASCII Art Effects:**
+- `wave(options)` - Sine wave displacement
+- `colorCycle(options)` - Rainbow color rotation
+- `pulse(options)` - Breathing animation
+- `perspective(options)` - 3D transforms
+- `colorGradient(options)` - Color gradients
+
+**Text Animation Effects:**
+- `scramble(options)` - Random character scramble
+- `reveal(options)` - Sequential reveal
+- `glitch(options)` - Digital glitch
+- `typewriter(options)` - Typing animation
+- `matrixRain(options)` - Matrix-style rain
+
+### Framework Integration
+
+**React:**
+```javascript
+import { useEffect, useRef } from 'react';
+import { create } from '@jyiro/ascii-script';
+
+function AsciiLogo() {
+  const logoRef = useRef(null);
+  const asciiRef = useRef(null);
+  const artRef = useRef(null);
+
+  useEffect(() => {
+    if (!logoRef.current) return;
+
+    // Create engine once
+    asciiRef.current = create();
+    artRef.current = asciiRef.current.createArt(logoRef.current);
+
+    // Apply effect
+    artRef.current.preset('rainbow').then(() => {
+      artRef.current.play();
+    });
+
+    // Cleanup
+    return () => {
+      if (asciiRef.current && artRef.current) {
+        asciiRef.current.destroy(artRef.current.id);
+      }
+    };
+  }, []);
+
+  return <pre ref={logoRef}>ASCII ART HERE</pre>;
+}
+```
+
+**Vue:**
+```vue
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { create } from '@jyiro/ascii-script';
+
+const logoRef = ref(null);
+let ascii = null;
+let art = null;
+
+onMounted(async () => {
+  ascii = create();
+  art = ascii.createArt(logoRef.value);
+  await art.preset('rainbow');
+  art.play();
+});
+
+onUnmounted(() => {
+  if (ascii && art) {
+    ascii.destroy(art.id);
+  }
+});
+</script>
+
+<template>
+  <pre ref="logoRef">ASCII ART HERE</pre>
+</template>
+```
+
+### Common Questions
+
+**Q: How do I create a custom preset?**
+A: You can't. Chain effects manually:
+```javascript
+await art.wave();
+await art.colorGradient({ baseColor: '#00ff00' });
+art.play();
+```
+
+**Q: Can I use `.start()` instead of `.play()`?**
+A: No. The method is `.play()`. There is no `.start()` method on art instances.
+
+**Q: How do I initialize the engine?**
+A: Use `const ascii = create()`. It auto-starts by default.
+
+**Q: Does this work with TypeScript?**
+A: Yes, but types are inferred. The library is written in vanilla JS.
 
 ## Desarrollo
 
@@ -439,23 +671,104 @@ Canvas-based backgrounds:
 
 ## Presets
 
-Pre-configured effect combinations for quick use:
+Pre-configured effect combinations for quick use.
+
+### ⚠️ Available Presets (Complete List)
+
+**IMPORTANT:** Only these 5 presets exist. Do not invent new names.
+
+| Preset | Included Effects | Best For |
+|--------|------------------|----------|
+| `rainbow` | wave + colorCycle | Animated logos with color |
+| `hologram` | glitch + pulse | Futuristic effects |
+| `matrix` | matrixRain + scanlines | Matrix/Cyberpunk aesthetic |
+| `terminal` | typewriter + scanlines | Retro terminal text |
+| `decrypt` | scramble → reveal | Decryption animations |
+
+### Using Presets
 
 ```javascript
-// Hologram effect (glitch + pulse)
+// ✅ CORRECT: Use one of the 5 available presets
+await logo.preset('rainbow');
 await logo.preset('hologram');
-
-// Matrix effect (matrix rain + scanlines)
 await text.preset('matrix');
-
-// Decrypt animation (scramble → reveal)
+await text.preset('terminal');
 await text.preset('decrypt');
 
-// Rainbow wave (wave + color cycle)
-await logo.preset('rainbow');
+// ❌ WRONG: These presets DO NOT exist
+await logo.preset('cool');      // ❌ Doesn't exist
+await logo.preset('custom');    // ❌ Doesn't exist
+await logo.preset('neon');      // ❌ Doesn't exist
+```
 
-// Retro terminal (typewriter + scanlines)
-await text.preset('terminal');
+### Creating Custom Combinations
+
+If you need a different combination, chain effects manually:
+
+```javascript
+// Custom combination
+await logo.wave({ amplitude: 5 });
+await logo.colorGradient({ baseColor: '#00ff00' });
+logo.play();
+```
+
+## ⛔ Common Mistakes (AI Hallucinations)
+
+This library is **vanilla JavaScript**. Do not confuse it with:
+
+### ❌ What does NOT exist in this library:
+
+```javascript
+// ❌ No useEffect - This is NOT React
+useEffect(() => {
+  const ascii = create();
+}, []);
+
+// ❌ No .start() method - Use .play()
+art.start(); // ❌ Wrong
+art.play();  // ✅ Correct
+
+// ❌ No constructor with `new`
+const ascii = new AsciiScript(); // ❌ Wrong
+const ascii = create();          // ✅ Correct
+
+// ❌ No invented presets
+await art.preset('glow');      // ❌ Doesn't exist
+await art.preset('rainbow');   // ✅ Correct
+
+// ❌ No .initialize() method
+ascii.initialize(); // ❌ Wrong
+ascii.start();      // ✅ Correct (if autoStart: false)
+```
+
+### ✅ Correct API:
+
+```javascript
+// ✅ Import
+import { create } from '@jyiro/ascii-script';
+
+// ✅ Create instance
+const ascii = create();
+
+// ✅ Create art
+const art = ascii.createArt('#logo');
+
+// ✅ Apply valid preset
+await art.preset('rainbow'); // Only: rainbow, hologram, matrix, terminal, decrypt
+
+// ✅ Or apply individual effects
+await art.wave();
+await art.colorCycle();
+
+// ✅ Play
+art.play();
+
+// ✅ Control
+art.pause();
+art.reset();
+
+// ✅ Destroy
+ascii.destroy(art.id);
 ```
 
 ## Examples
@@ -475,15 +788,17 @@ npm install
 npm run dev
 
 # 4. Open in browser
-# The server will show you the URL (usually http://localhost:5173)
+# Visit http://localhost:5173 (automatically redirects to the studio)
 ```
 
-**Available Examples:**
+**Interactive Studio:**
 
-- **Enhanced Terminal** - `examples/enhanced.html`
-  - Complete interactive terminal with all effects
-  - Real-time controls
-  - Showcase of all presets
+When you open `http://localhost:5173`, you'll be automatically redirected to the **ASCII-SCRIPT Studio** (`examples/enhanced.html`):
+
+- ✨ Interactive interface with all available effects
+- 🎮 Real-time controls for experimentation
+- 🎨 Complete showcase of all 5 presets
+- 📦 Two simultaneous animation layers (text + procedural)
 
 ### Code Examples
 
@@ -569,8 +884,157 @@ animate();
 ## Documentation
 
 - [Complete API Reference](docs/api.md) - Detailed documentation of all APIs and methods
+- [Presets Guide](docs/PRESETS.md) - Comprehensive documentation of all available presets
 - **Live Examples** - Run `npm run dev` and open `examples/enhanced.html` - Complete interactive terminal
 - Custom Effects Guide - See "Advanced Usage" section in [docs/api.md](docs/api.md)
+
+## 🤖 For AI Assistants
+
+**READ THIS CAREFULLY before generating code:**
+
+### Core Facts
+
+1. **This is vanilla JavaScript**, NOT a React library
+2. **No hooks exist**: No `useEffect`, `useState`, `useRef`
+3. **Only 5 presets exist**: `rainbow`, `hologram`, `matrix`, `terminal`, `decrypt`
+4. **Method names are fixed**: `.play()` NOT `.start()`, `create()` NOT `new AsciiScript()`
+
+### Complete Working Example
+
+```javascript
+// ✅ CORRECT IMPLEMENTATION
+import { create } from '@jyiro/ascii-script';
+
+// 1. Create engine
+const ascii = create();
+
+// 2. Create art instance
+const art = ascii.createArt('#logo');
+
+// 3. Apply effects (choose ONE approach):
+
+// APPROACH A: Use a preset (only these 5 exist)
+await art.preset('rainbow');    // ✅ Valid
+await art.preset('hologram');   // ✅ Valid
+await art.preset('matrix');     // ✅ Valid
+await art.preset('terminal');   // ✅ Valid
+await art.preset('decrypt');    // ✅ Valid
+
+// APPROACH B: Chain individual effects
+await art.wave({ amplitude: 3, frequency: 0.8 });
+await art.colorCycle({ speed: 0.002 });
+
+// 4. Start animation
+art.play();
+
+// 5. Control playback
+art.pause();  // Pause
+art.play();   // Resume
+art.reset();  // Stop and reset
+
+// 6. Cleanup
+ascii.destroy(art.id);
+```
+
+### Available Effects (Complete List)
+
+**ASCII Art Effects:**
+- `wave(options)` - Sine wave displacement
+- `colorCycle(options)` - Rainbow color rotation
+- `pulse(options)` - Breathing animation
+- `perspective(options)` - 3D transforms
+- `colorGradient(options)` - Color gradients
+
+**Text Animation Effects:**
+- `scramble(options)` - Random character scramble
+- `reveal(options)` - Sequential reveal
+- `glitch(options)` - Digital glitch
+- `typewriter(options)` - Typing animation
+- `matrixRain(options)` - Matrix-style rain
+
+### Framework Integration
+
+**React:**
+```javascript
+import { useEffect, useRef } from 'react';
+import { create } from '@jyiro/ascii-script';
+
+function AsciiLogo() {
+  const logoRef = useRef(null);
+  const asciiRef = useRef(null);
+  const artRef = useRef(null);
+
+  useEffect(() => {
+    if (!logoRef.current) return;
+
+    // Create engine once
+    asciiRef.current = create();
+    artRef.current = asciiRef.current.createArt(logoRef.current);
+
+    // Apply effect
+    artRef.current.preset('rainbow').then(() => {
+      artRef.current.play();
+    });
+
+    // Cleanup
+    return () => {
+      if (asciiRef.current && artRef.current) {
+        asciiRef.current.destroy(artRef.current.id);
+      }
+    };
+  }, []);
+
+  return <pre ref={logoRef}>ASCII ART HERE</pre>;
+}
+```
+
+**Vue:**
+```vue
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { create } from '@jyiro/ascii-script';
+
+const logoRef = ref(null);
+let ascii = null;
+let art = null;
+
+onMounted(async () => {
+  ascii = create();
+  art = ascii.createArt(logoRef.value);
+  await art.preset('rainbow');
+  art.play();
+});
+
+onUnmounted(() => {
+  if (ascii && art) {
+    ascii.destroy(art.id);
+  }
+});
+</script>
+
+<template>
+  <pre ref="logoRef">ASCII ART HERE</pre>
+</template>
+```
+
+### Common Questions
+
+**Q: How do I create a custom preset?**
+A: You can't. Chain effects manually:
+```javascript
+await art.wave();
+await art.colorGradient({ baseColor: '#00ff00' });
+art.play();
+```
+
+**Q: Can I use `.start()` instead of `.play()`?**
+A: No. The method is `.play()`. There is no `.start()` method on art instances.
+
+**Q: How do I initialize the engine?**
+A: Use `const ascii = create()`. It auto-starts by default.
+
+**Q: Does this work with TypeScript?**
+A: Yes, but types are inferred. The library is written in vanilla JS.
 
 ## Development
 

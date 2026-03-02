@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASCII-SCRIPT ~ Terminal</title>
+  <title>ASCII-SCRIPT Studio</title>
   <style>
     * {
       margin: 0;
@@ -12,9 +12,9 @@
     }
 
     body {
-      background: #1e2433;
-      color: #a9b7c6;
-      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      background: #2B2B2B;
+      color: #E5DCC5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', sans-serif;
       padding: 0;
       min-height: 100vh;
       overflow: hidden;
@@ -23,46 +23,46 @@
     .terminal {
       height: 100vh;
       display: grid;
-      grid-template-columns: 500px 1fr;
+      grid-template-columns: 480px 1fr;
       gap: 0;
     }
 
     .sidebar {
-      background: #252c3d;
-      border-right: 1px solid #30363d;
+      background: #E5DCC5;
+      border-right: 4px solid #3A3A3A;
       overflow-y: auto;
-      padding: 30px;
+      padding: 0;
       scrollbar-width: thin;
-      scrollbar-color: #30363d #252c3d;
+      scrollbar-color: #3A3A3A #E5DCC5;
     }
 
     .sidebar::-webkit-scrollbar {
-      width: 8px;
+      width: 12px;
     }
 
     .sidebar::-webkit-scrollbar-track {
-      background: #252c3d;
+      background: #E5DCC5;
     }
 
     .sidebar::-webkit-scrollbar-thumb {
-      background: #30363d;
-      border-radius: 4px;
+      background: #3A3A3A;
+      border-radius: 0;
     }
 
     .preview-pane {
-      background: #1e2433;
-      padding: 40px;
+      background: #2B2B2B;
+      padding: 60px;
       display: flex;
       flex-direction: column;
       overflow: auto;
       position: relative;
-      gap: 30px;
+      gap: 60px;
     }
 
     .preview-section {
       position: relative;
       flex: 1;
-      min-height: 300px;
+      min-height: 400px;
     }
 
     #background-canvas {
@@ -71,27 +71,19 @@
       left: 0;
       width: 100%;
       height: 100%;
-      border: 1px solid #30363d;
-      border-radius: 6px;
+      border: 4px solid #E5DCC5;
+      border-radius: 0;
     }
 
-    .prompt {
-      color: #7ee787;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 30px 0 15px 0;
-      font-size: 15px;
-    }
-
-    .prompt::before {
-      content: '$';
-      color: #58a6ff;
-      font-weight: bold;
-    }
-
-    .prompt-text {
-      color: #ffa657;
+    .section-header {
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+      color: #E5DCC5;
+      border-bottom: 4px solid #E5DCC5;
+      padding-bottom: 12px;
     }
 
     .ascii-art-container {
@@ -99,16 +91,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 300px;
+      min-height: 400px;
+      border: 4px solid #E5DCC5;
+      padding: 40px;
     }
 
     .background-container {
       position: relative;
       width: 100%;
-      height: 400px;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      background: #000;
+      height: 500px;
+      border: 4px solid #E5DCC5;
+      border-radius: 0;
+      background: #2B2B2B;
       overflow: hidden;
     }
 
@@ -118,24 +112,26 @@
     }
 
     #ascii-preview {
-      font-size: 18px;
+      font-size: 20px;
       line-height: 1.3;
       white-space: pre;
-      color: #c9d1d9;
-      font-weight: 500;
+      color: #E5DCC5;
+      font-weight: 600;
       letter-spacing: -0.5px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
     .control-panel {
-      background: #1e2433;
-      border-radius: 6px;
-      padding: 20px;
-      margin: 20px 0;
-      border: 1px solid #30363d;
+      background: #E5DCC5;
+      border-radius: 0;
+      padding: 40px;
+      margin: 0;
+      border: none;
+      border-bottom: 4px solid #3A3A3A;
     }
 
     .control-group {
-      margin-bottom: 25px;
+      margin-bottom: 32px;
     }
 
     .control-group:last-child {
@@ -143,12 +139,13 @@
     }
 
     .control-label {
-      color: #8b949e;
-      font-size: 12px;
+      color: #2B2B2B;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
       display: block;
+      font-weight: 900;
     }
 
     .input-group {
@@ -160,33 +157,35 @@
 
     input[type="color"] {
       width: 60px;
-      height: 36px;
-      border: 1px solid #30363d;
-      background: #1e2433;
+      height: 48px;
+      border: 3px solid #3A3A3A;
+      background: #F5F0E8;
       cursor: pointer;
-      border-radius: 4px;
-      padding: 2px;
+      border-radius: 0;
+      padding: 4px;
     }
 
     input[type="color"]::-webkit-color-swatch {
       border: none;
-      border-radius: 2px;
+      border-radius: 0;
     }
 
     select {
-      background: #1e2433;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      padding: 8px 12px;
-      border-radius: 4px;
+      background: #F5F0E8;
+      color: #2B2B2B;
+      border: 3px solid #3A3A3A;
+      padding: 12px 16px;
+      border-radius: 0;
       font-family: inherit;
       font-size: 13px;
       cursor: pointer;
       outline: none;
+      font-weight: 600;
     }
 
     select:hover {
-      border-color: #58a6ff;
+      background: #3A3A3A;
+      color: #E5DCC5;
     }
 
     .range-input {
@@ -196,192 +195,204 @@
 
     input[type="range"] {
       width: 100%;
-      height: 4px;
-      background: #30363d;
-      border-radius: 2px;
+      height: 6px;
+      background: #3A3A3A;
+      border-radius: 0;
       outline: none;
       -webkit-appearance: none;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      background: #58a6ff;
-      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      background: #3A3A3A;
+      border-radius: 0;
       cursor: pointer;
+      border: 2px solid #E5DCC5;
     }
 
     input[type="range"]::-webkit-slider-thumb:hover {
-      background: #79c0ff;
+      background: #2B2B2B;
     }
 
     .range-value {
-      color: #58a6ff;
-      font-size: 13px;
-      min-width: 40px;
+      color: #2B2B2B;
+      font-size: 14px;
+      min-width: 50px;
       text-align: right;
-      font-weight: 600;
+      font-weight: 900;
     }
 
     textarea {
       width: 100%;
       min-height: 180px;
-      background: #1e2433;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      padding: 15px;
-      font-family: inherit;
+      background: #F5F0E8;
+      color: #2B2B2B;
+      border: 3px solid #3A3A3A;
+      padding: 16px;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
       font-size: 13px;
       resize: vertical;
-      border-radius: 4px;
+      border-radius: 0;
       line-height: 1.4;
       outline: none;
+      font-weight: 500;
     }
 
     textarea:focus {
-      border-color: #58a6ff;
+      background: #EDE6DB;
     }
 
     textarea::placeholder {
-      color: #6e7681;
+      color: #A39A8E;
     }
 
     .button-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     button {
-      background: transparent;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      padding: 8px 16px;
+      background: #F5F0E8;
+      color: #2B2B2B;
+      border: 3px solid #3A3A3A;
+      padding: 12px 24px;
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      border-radius: 4px;
-      transition: all 0.15s ease;
-      font-weight: 500;
+      border-radius: 0;
+      transition: all 0.1s ease;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     button:hover {
-      background: #30363d;
-      border-color: #58a6ff;
-      color: #58a6ff;
+      background: #3A3A3A;
+      color: #E5DCC5;
     }
 
     button.primary {
-      background: #238636;
-      border-color: #238636;
-      color: #fff;
+      background: #3A3A3A;
+      border-color: #3A3A3A;
+      color: #E5DCC5;
     }
 
     button.primary:hover {
-      background: #2ea043;
-      border-color: #2ea043;
+      background: #D4A574;
+      border-color: #D4A574;
+      color: #2B2B2B;
     }
 
     button.accent {
-      background: #1f6feb;
-      border-color: #1f6feb;
-      color: #fff;
+      background: #D4A574;
+      border-color: #D4A574;
+      color: #2B2B2B;
     }
 
     button.accent:hover {
-      background: #388bfd;
-      border-color: #388bfd;
+      background: #3A3A3A;
+      color: #E5DCC5;
     }
 
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       cursor: pointer;
-      color: #c9d1d9;
+      color: #2B2B2B;
       font-size: 13px;
       margin-bottom: 12px;
+      font-weight: 600;
     }
 
     input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       cursor: pointer;
-      accent-color: #1f6feb;
+      accent-color: #3A3A3A;
+      border: 2px solid #3A3A3A;
     }
 
-    .command-output {
-      color: #8b949e;
-      font-size: 13px;
+    .info-text {
+      color: #6B635A;
+      font-size: 12px;
       line-height: 1.6;
-      margin: 15px 0;
-      padding-left: 20px;
+      margin: 16px 0;
+      font-weight: 500;
     }
 
-    .command-output a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-
-    .command-output a:hover {
-      text-decoration: underline;
+    .info-text strong {
+      color: #2B2B2B;
+      font-weight: 900;
     }
 
     .divider {
-      height: 1px;
-      background: #30363d;
-      margin: 35px 0;
+      height: 4px;
+      background: #E5DCC5;
+      margin: 0;
     }
 
     .header {
-      margin-bottom: 40px;
+      padding: 60px 40px 40px 40px;
+      border-bottom: 4px solid #3A3A3A;
+      background: #E5DCC5;
     }
 
     .header h1 {
-      font-size: 28px;
-      color: #c9d1d9;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-size: 48px;
+      color: #2B2B2B;
+      font-weight: 900;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      line-height: 0.95;
     }
 
     .header p {
-      color: #8b949e;
+      color: #6B635A;
       font-size: 14px;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
-
-    .cursor {
-      animation: blink 1s infinite;
-      color: #58a6ff;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
     .sidebar-footer {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #30363d;
-      font-size: 12px;
-      color: #8b949e;
+      padding: 40px;
+      border-top: 4px solid #3A3A3A;
+      font-size: 11px;
+      color: #6B635A;
       text-align: center;
+      background: #E5DCC5;
+      font-weight: 600;
     }
 
     .sidebar-footer a {
-      color: #58a6ff;
+      color: #2B2B2B;
       text-decoration: none;
-      transition: color 0.2s;
+      transition: opacity 0.2s;
+      font-weight: 900;
     }
 
     .sidebar-footer a:hover {
-      color: #7ee787;
+      opacity: 0.6;
     }
 
     .sidebar-footer svg {
       vertical-align: middle;
-      margin-right: 4px;
+      margin-right: 6px;
+    }
+
+    .section-number {
+      display: inline-block;
+      background: #3A3A3A;
+      color: #E5DCC5;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -389,20 +400,15 @@
   <div class="terminal">
     <!-- Sidebar Controls -->
     <div class="sidebar">
-      <div class="prompt">
-        <span class="prompt-text">ascii-script</span>
-        <span style="color: #8b949e;">~</span>
-        <span class="prompt-text">controls</span>
-      </div>
-
-      <div class="command-output" style="margin-top: 10px; margin-bottom: 20px;">
-        Micro-library for ASCII rendering · ESM · 5kb gzipped
+      <div class="header">
+        <h1>ASCII—<br>SCRIPT<br>STUDIO</h1>
+        <p>A micro-library for ASCII rendering · 5kb</p>
       </div>
 
       <div class="control-panel">
         <!-- ASCII Input -->
         <div class="control-group">
-          <label class="control-label">ASCII Art Input</label>
+          <label class="control-label"><span class="section-number">01</span> ASCII Art Input</label>
           <textarea id="ascii-input" placeholder="Paste your ASCII art here...">  █████╗ ███████╗ ██████╗██╗██╗
  ██╔══██╗██╔════╝██╔════╝██║██║
  ███████║███████╗██║     ██║██║
@@ -416,16 +422,16 @@
 
         <!-- Colors -->
         <div class="control-group">
-          <label class="control-label">Color Configuration</label>
+          <label class="control-label"><span class="section-number">02</span> Color Configuration</label>
           <div class="input-group">
             <div style="flex: 1;">
-              <div style="color: #6e7681; font-size: 11px; margin-bottom: 6px;">Base Text Color</div>
-              <input type="color" id="color-picker" value="#c9d1d9">
+              <div style="color: #6B635A; font-size: 11px; margin-bottom: 6px; font-weight: 600;">Base Text Color</div>
+              <input type="color" id="color-picker" value="#E5DCC5">
               <button onclick="applyColor()" style="margin-top: 8px; width: 100%;">Apply</button>
             </div>
             <div style="flex: 1;">
-              <div style="color: #6e7681; font-size: 11px; margin-bottom: 6px;">Gradient Base</div>
-              <input type="color" id="gradient-picker" value="#58a6ff">
+              <div style="color: #6B635A; font-size: 11px; margin-bottom: 6px; font-weight: 600;">Gradient Base</div>
+              <input type="color" id="gradient-picker" value="#E5DCC5">
               <select id="gradient-mode" style="margin-top: 8px; width: 100%;">
                 <option value="lightness">Lightness</option>
                 <option value="saturation">Saturation</option>
@@ -438,16 +444,16 @@
 
         <!-- Wave Parameters -->
         <div class="control-group">
-          <label class="control-label">Wave Parameters</label>
+          <label class="control-label"><span class="section-number">03</span> Wave Parameters</label>
           <div class="input-group" style="margin-bottom: 12px;">
-            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Amplitude</span>
+            <span style="color: #6B635A; font-size: 12px; min-width: 80px; font-weight: 600;">Amplitude</span>
             <div class="range-input">
               <input type="range" id="wave-amplitude" min="1" max="8" value="3" step="1">
             </div>
             <span class="range-value" id="wave-amplitude-val">3</span>
           </div>
           <div class="input-group">
-            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Frequency</span>
+            <span style="color: #6B635A; font-size: 12px; min-width: 80px; font-weight: 600;">Frequency</span>
             <div class="range-input">
               <input type="range" id="wave-frequency" min="0.2" max="2.0" value="0.8" step="0.1">
             </div>
@@ -465,15 +471,15 @@
 
         <!-- Background Parameters -->
         <div class="control-group">
-          <label class="control-label">Background Parameters</label>
+          <label class="control-label"><span class="section-number">04</span> Background Parameters</label>
           
           <div style="margin-bottom: 12px;">
-            <label style="color: #6e7681; font-size: 11px; margin-bottom: 6px; display: block;">Background Color</label>
-            <input type="color" id="bg-color" value="#58a6ff">
+            <label style="color: #6B635A; font-size: 11px; margin-bottom: 6px; display: block; font-weight: 600;">Background Color</label>
+            <input type="color" id="bg-color" value="#E5DCC5">
           </div>
           
           <div class="input-group" style="margin-bottom: 12px;">
-            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Scale</span>
+            <span style="color: #6B635A; font-size: 12px; min-width: 80px; font-weight: 600;">Scale</span>
             <div class="range-input">
               <input type="range" id="bg-scale" min="0.01" max="0.5" value="0.1" step="0.01">
             </div>
@@ -481,7 +487,7 @@
           </div>
           
           <div class="input-group" style="margin-bottom: 12px;">
-            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Speed</span>
+            <span style="color: #6B635A; font-size: 12px; min-width: 80px; font-weight: 600;">Speed</span>
             <div class="range-input">
               <input type="range" id="bg-speed" min="0.0001" max="0.005" value="0.0005" step="0.0001">
             </div>
@@ -489,7 +495,7 @@
           </div>
           
           <div class="input-group" style="margin-bottom: 12px;">
-            <span style="color: #8b949e; font-size: 12px; min-width: 80px;">Density</span>
+            <span style="color: #6B635A; font-size: 12px; min-width: 80px; font-weight: 600;">Density</span>
             <div class="range-input">
               <input type="range" id="bg-density" min="1" max="10" value="5" step="1">
             </div>
@@ -497,7 +503,7 @@
           </div>
           
           <div style="margin-top: 12px;">
-            <label style="color: #6e7681; font-size: 11px; margin-bottom: 6px; display: block;">Charset</label>
+            <label style="color: #6B635A; font-size: 11px; margin-bottom: 6px; display: block; font-weight: 600;">Charset</label>
             <select id="bg-charset" style="width: 100%;">
               <option value=" ░▒▓█">Dense (░▒▓█)</option>
               <option value=" .:-=+*#%@">Classic (.:-=+*#%@)</option>
@@ -510,7 +516,7 @@
 
         <!-- Effects -->
         <div class="control-group">
-          <label class="control-label">Effects</label>
+          <label class="control-label"><span class="section-number">05</span> Effects</label>
           <div class="button-group">
             <button onclick="applyEffect('wave')">Wave</button>
             <button onclick="applyEffect('colorCycle')">Rainbow</button>
@@ -523,7 +529,7 @@
 
         <!-- Presets -->
         <div class="control-group">
-          <label class="control-label">Presets</label>
+          <label class="control-label"><span class="section-number">06</span> Presets</label>
           <div class="button-group">
             <button onclick="applyPreset('rainbow')" class="accent">Rainbow</button>
             <button onclick="applyPreset('hologram')" class="accent">Hologram</button>
@@ -534,7 +540,7 @@
 
         <!-- Procedural Background -->
         <div class="control-group">
-          <label class="control-label">Procedural Background</label>
+          <label class="control-label"><span class="section-number">07</span> Procedural Background</label>
           <div class="button-group">
             <button onclick="applyBackground('noise')">Noise</button>
             <button onclick="applyBackground('scanlines')">Scanlines</button>
@@ -547,7 +553,7 @@
 
         <!-- Background Presets -->
         <div class="control-group">
-          <label class="control-label">Background Presets</label>
+          <label class="control-label"><span class="section-number">08</span> Background Presets</label>
           <div class="button-group">
             <button onclick="applyBgPreset('retro')" class="accent">Retro CRT</button>
             <button onclick="applyBgPreset('cyber')" class="accent">Cyberpunk</button>
@@ -558,7 +564,7 @@
 
         <!-- Playback -->
         <div class="control-group">
-          <label class="control-label">Playback</label>
+          <label class="control-label"><span class="section-number">09</span> Playback</label>
           <div class="button-group">
             <button onclick="play()">▶ Play</button>
             <button onclick="pause()">⏸ Pause</button>
@@ -567,26 +573,14 @@
         </div>
       </div>
 
-      <div class="command-output" style="margin-top: 20px;">
-        💡 Tip: Try stacking Wave + Gradient
-      </div>
-
-      <div class="prompt" style="margin-top: 20px;">
-        <span class="cursor">_</span>
+      <div class="info-text" style="padding: 0 40px;">
+        <strong>Pro Tip:</strong> Combine Wave + Gradient for dynamic results
       </div>
 
       <!-- Footer -->
       <div class="sidebar-footer">
-        <div style="margin-bottom: 8px;">
-          <a href="https://github.com/Jyiro" target="_blank" rel="noopener noreferrer">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-            </svg>
-            @Jyiro
-          </a>
-        </div>
-        <div style="color: #6e7681; font-size: 11px;">
-          Built with ASCII-SCRIPT
+        <div style="color: #6B635A; font-size: 11px;">
+          ASCII-SCRIPT Studio · Built by <a href="https://github.com/Jyiro" target="_blank" rel="noopener noreferrer">@Jyiro</a>
         </div>
       </div>
     </div>
@@ -595,10 +589,7 @@
     <div class="preview-pane">
       <!-- ASCII Art Section -->
       <div class="preview-section">
-        <div class="prompt">
-          <span class="prompt-text">cat</span>
-          <span style="color: #8b949e;">ascii-art.txt</span>
-        </div>
+        <div class="section-header">LIVE CANVAS</div>
 
         <div class="ascii-art-container">
           <pre id="ascii-preview">  █████╗ ███████╗ ██████╗██╗██╗
@@ -614,16 +605,9 @@
 
       <!-- Procedural Background Section -->
       <div class="preview-section">
-        <div class="prompt">
-          <span class="prompt-text">cat</span>
-          <span style="color: #8b949e;">background.canvas</span>
-        </div>
+        <div class="section-header">PROCEDURAL LAYER</div>
 
         <div class="background-container" id="background-canvas"></div>
-
-        <div class="command-output" style="margin-top: 10px;">
-          Procedural effects render here · Noise, Scanlines, Particles
-        </div>
       </div>
     </div>
   </div>
@@ -975,7 +959,7 @@
           bgSpeed.value = 0.0001;
           bgDensity.value = 3;
           bgCharset.value = ' ·∴:⁖';
-          bgColor.value = '#58a6ff';
+          bgColor.value = '#E5DCC5';
           break;
       }
       
@@ -1004,7 +988,7 @@
     // Auto-start with gradient
     setTimeout(async () => {
       currentEffect = 'gradient';
-      await art.colorGradient({ baseColor: '#58a6ff', mode: 'lightness', speed: 0.001 });
+      await art.colorGradient({ baseColor: '#E5DCC5', mode: 'lightness', speed: 0.001 });
       art.play();
     }, 300);
   </script>
