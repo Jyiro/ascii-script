@@ -17,7 +17,6 @@ build/
 
 # Deployment
 .vercel/
-vercel.json
 
 # OS files
 .DS_Store
