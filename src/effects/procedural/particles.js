@@ -7,6 +7,7 @@ import { BaseEffect } from '../base-effect.js';
 export class ParticlesEffect extends BaseEffect {
   #count = 50;
   #charset = '·•*+';
+  #charsetArray = [];
   #speed = 1;
   #particles = [];
   #canvas = null;
@@ -17,6 +18,7 @@ export class ParticlesEffect extends BaseEffect {
     super(config);
     this.#count = config.count || 50;
     this.#charset = config.charset || this.#charset;
+    this.#charsetArray = Array.from(this.#charset);
     this.#speed = config.speed || 1;
   }
 
@@ -61,12 +63,13 @@ export class ParticlesEffect extends BaseEffect {
   }
 
   #createParticle() {
+    const chars = this.#charsetArray;
     return {
       x: Math.random() * this.#canvas.width,
       y: Math.random() * this.#canvas.height,
       vx: (Math.random() - 0.5) * this.#speed,
       vy: (Math.random() - 0.5) * this.#speed,
-      char: this.#charset[Math.floor(Math.random() * this.#charset.length)],
+      char: chars[Math.floor(Math.random() * chars.length)],
       opacity: 0.3 + Math.random() * 0.7
     };
   }
@@ -88,10 +91,28 @@ export class ParticlesEffect extends BaseEffect {
     this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
     this.#ctx.font = '16px monospace';
 
-    this.#particles.forEach(p => {
-      this.#ctx.globalAlpha = p.opacity;
-      this.#ctx.fillText(p.char, p.x, p.y);
-    });
+    // Batch particles into 4 opacity buckets (0.25 wide) to minimise
+    // globalAlpha state changes from O(n) down to O(buckets).
+    // Each bucket uses the midpoint opacity of its range.
+    const BUCKETS = 4;
+    const bucketSize = 1 / BUCKETS;
+    // Array of arrays, one per bucket
+    const buckets = Array.from({ length: BUCKETS }, () => []);
+
+    for (const p of this.#particles) {
+      const idx = Math.min(BUCKETS - 1, Math.floor(p.opacity / bucketSize));
+      buckets[idx].push(p);
+    }
+
+    for (let b = 0; b < BUCKETS; b++) {
+      const group = buckets[b];
+      if (group.length === 0) continue;
+      // Use midpoint opacity for the bucket
+      this.#ctx.globalAlpha = (b + 0.5) * bucketSize;
+      for (const p of group) {
+        this.#ctx.fillText(p.char, p.x, p.y);
+      }
+    }
 
     this.#ctx.globalAlpha = 1;
   }

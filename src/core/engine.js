@@ -7,6 +7,35 @@ export class Engine {
   #running = false;
   #rafId = null;
   #lastTime = 0;
+  // Track whether the engine was running before a visibility-change pause
+  // so we can correctly resume (or not) when the page becomes visible again.
+  #pausedByVisibility = false;
+
+  constructor() {
+    // Pause the RAF loop while the browser tab is hidden — no point burning
+    // GPU / CPU on animations the user cannot see.
+    document.addEventListener('visibilitychange', this.#onVisibilityChange);
+  }
+
+  #onVisibilityChange = () => {
+    if (document.hidden) {
+      if (this.#running) {
+        this.#pausedByVisibility = true;
+        this.#running = false;
+        if (this.#rafId) {
+          cancelAnimationFrame(this.#rafId);
+          this.#rafId = null;
+        }
+      }
+    } else {
+      if (this.#pausedByVisibility) {
+        this.#pausedByVisibility = false;
+        this.#running = true;
+        this.#lastTime = performance.now();
+        this.#loop();
+      }
+    }
+  };
 
   /**
    * Register an instance to be updated each frame
@@ -40,10 +69,19 @@ export class Engine {
    */
   stop() {
     this.#running = false;
+    this.#pausedByVisibility = false;
     if (this.#rafId) {
       cancelAnimationFrame(this.#rafId);
       this.#rafId = null;
     }
+  }
+
+  /**
+   * Destroy engine and remove event listeners
+   */
+  destroy() {
+    this.stop();
+    document.removeEventListener('visibilitychange', this.#onVisibilityChange);
   }
 
   /**

@@ -12,6 +12,8 @@ export class TextBlock extends BaseInstance {
   #threshold = 100; // Line threshold for canvas rendering
   #canvas = null;
   #ctx = null;
+  // Last text written to DOM — skip update if unchanged (avoids forced reflow)
+  #lastDOMText = null;
 
   constructor(id, element, config = {}) {
     super(id, element);
@@ -115,6 +117,7 @@ export class TextBlock extends BaseInstance {
       this.element.innerHTML = '';
       this.element.textContent = this.#originalText;
     }
+    this.#lastDOMText = this.#originalText;
     return this;
   }
 
@@ -171,7 +174,12 @@ export class TextBlock extends BaseInstance {
     if (this.#renderMode === 'canvas') {
       this.#renderCanvas();
     } else {
-      this.element.textContent = this.#currentText;
+      // Skip the textContent write when nothing has changed — avoids triggering
+      // a browser reflow/repaint cycle on frames where the text is static.
+      if (this.#currentText !== this.#lastDOMText) {
+        this.#lastDOMText = this.#currentText;
+        this.element.textContent = this.#currentText;
+      }
     }
   }
 

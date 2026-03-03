@@ -3,12 +3,22 @@ import { BaseEffect } from '../base-effect.js';
 /**
  * Color Cycle effect - HSL color rotation per character
  * Creates rainbow wave effects across ASCII art
+ *
+ * Performance strategy: build the span DOM exactly once, giving each span a
+ * static per-character hue offset stored as a CSS custom property.  Every
+ * subsequent frame we only update a single CSS variable on the container
+ * (--ascii-hue-base) — the browser's CSS engine resolves all character
+ * colors natively with zero JS DOM churn or GC pressure.
  */
 export class ColorCycleEffect extends BaseEffect {
   #speed = 0.001;
   #spread = 10;
   #saturation = 70;
   #lightness = 50;
+
+  // Track the last text we built spans for, so we rebuild only when content changes
+  #lastBuiltText = null;
+  #lastBuiltHTML = null;
 
   constructor(config = {}) {
     super(config);
@@ -19,24 +29,37 @@ export class ColorCycleEffect extends BaseEffect {
   }
 
   render(text, elapsed, context = {}) {
-    // Wrap each character in span with color
-    const lines = text.split('\n');
-    let charIndex = 0;
     const time = elapsed * this.#speed;
+    const element = context.element;
 
-    const colored = lines.map((line, lineIndex) => {
-      return line.split('').map((char, colIndex) => {
-        if (char === ' ') return char;
-        
-        const hue = (time + (charIndex * this.#spread)) % 360;
-        charIndex++;
-        
-        return `<span style="color: hsl(${hue}, ${this.#saturation}%, ${this.#lightness}%)">${char}</span>`;
-      }).join('');
-    });
+    // --- Build span structure once (or when text changes) ---
+    if (text !== this.#lastBuiltText) {
+      this.#lastBuiltText = text;
+      const lines = text.split('\n');
+      const sat = this.#saturation;
+      const light = this.#lightness;
+      const spread = this.#spread;
+      let charIndex = 0;
 
-    // Return HTML with special marker
-    const html = colored.join('<br>');
-    return { __html: html, __text: text };
+      // Each span carries a static --ch-offset so we never need to rebuild the DOM.
+      // The actual displayed hue is: calc(var(--ascii-hue-base, 0) + offset)
+      const colored = lines.map((line) => {
+        return line.split('').map((char) => {
+          if (char === ' ') return char;
+          const offset = charIndex * spread;
+          charIndex++;
+          return `<span style="color:hsl(calc(var(--ascii-hue-base,0) + ${offset}),${sat}%,${light}%)">${char}</span>`;
+        }).join('');
+      });
+
+      this.#lastBuiltHTML = colored.join('<br>');
+    }
+
+    // --- Every frame: update ONE CSS variable — O(1), no DOM surgery ---
+    if (element) {
+      element.style.setProperty('--ascii-hue-base', (time * 360) % 360);
+    }
+
+    return { __html: this.#lastBuiltHTML, __text: text };
   }
 }

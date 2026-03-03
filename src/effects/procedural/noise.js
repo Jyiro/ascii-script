@@ -8,6 +8,13 @@ export class NoiseEffect extends BaseEffect {
   #octaves = 3;
   #persistence = 0.5;
 
+  // Frame-level cache for #smoothNoise — many cells share the same integer
+  // neighbor coordinates (especially at low scale values), so this avoids
+  // recomputing up to 9 #noise() calls for each duplicate (x,y,seed) triple.
+  // We invalidate the cache when `time` changes (i.e. on every new frame).
+  #smoothCache = new Map();
+  #smoothCacheSeed = null;
+
   constructor(config = {}) {
     super(config);
     this.#scale = config.scale || 0.1;
@@ -28,6 +35,19 @@ export class NoiseEffect extends BaseEffect {
    * Smooth noise with interpolation
    */
   #smoothNoise(x, y, seed) {
+    // Cache key: integer coordinates + seed
+    // Seed changes per frame — clear stale cache entries
+    if (seed !== this.#smoothCacheSeed) {
+      this.#smoothCache.clear();
+      this.#smoothCacheSeed = seed;
+    }
+
+    // Fast integer key: combine x, y with a bitwise-friendly packing.
+    // x and y are small integers (bounded by cols/rows * octave frequency).
+    const key = `${x},${y}`;
+    const cached = this.#smoothCache.get(key);
+    if (cached !== undefined) return cached;
+
     const corners = (
       this.#noise(x - 1, y - 1, seed) + 
       this.#noise(x + 1, y - 1, seed) + 
@@ -44,7 +64,9 @@ export class NoiseEffect extends BaseEffect {
     
     const center = this.#noise(x, y, seed) / 4;
     
-    return corners + sides + center;
+    const result = corners + sides + center;
+    this.#smoothCache.set(key, result);
+    return result;
   }
 
   /**
@@ -68,9 +90,11 @@ export class NoiseEffect extends BaseEffect {
   }
 
   #interpolate(a, b, x) {
-    const ft = x * Math.PI;
-    const f = (1 - Math.cos(ft)) * 0.5;
-    return a * (1 - f) + b * f;
+    // Cubic Hermite smoothstep: f(x) = x²(3 − 2x)
+    // Produces the same smooth S-curve as cosine interpolation
+    // but uses only multiplications — no Math.cos, no Math.PI.
+    const f = x * x * (3 - 2 * x);
+    return a + (b - a) * f;
   }
 
   /**

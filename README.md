@@ -19,7 +19,7 @@ Librería ligera e independiente de frameworks para crear impresionantes animaci
 - **Efectos Variados** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain y más
 - **Presets Listos** - Combinaciones preconfiguradas de efectos (hologram, rainbow, terminal, decrypt)
 - **Bundle Minúsculo** - ~5kb core + efectos cargados bajo demanda (3-5kb cada uno)
-- **Rendimiento 60fps** - Aceleración GPU vía transformaciones CSS, fallback canvas para arte grande
+- **Rendimiento 60fps** - Aceleración GPU vía `will-change` + canvas opaco, pausa automática en pestañas ocultas y elementos fuera del viewport
 - **Agnóstico de Framework** - JavaScript puro, funciona con React, Vue, Svelte o vanilla
 - **Auto-Detección** - Detecta y formatea automáticamente arte ASCII multi-línea
 - **Extensible** - Sistema de plugins para efectos personalizados
@@ -546,7 +546,10 @@ ascii-script/
 - **Bundle core**: ~5kb gzipped
 - **Efectos**: 3-5kb cada uno (carga bajo demanda)
 - **Target**: Renderizado a 60fps
-- **Aceleración GPU**: Vía transformaciones CSS
+- **Aceleración GPU**: Canvas con `will-change: transform` + contexto opaco (`alpha: false`)
+- **Tab Visibility**: El engine pausa el loop RAF cuando la pestaña está oculta y lo reanuda automáticamente
+- **IntersectionObserver**: Las instancias dejan de renderizar cuando salen del viewport
+- **Color Cycle sin GC**: Los `<span>` se construyen una sola vez; cada frame solo actualiza una CSS custom property
 - **Fallback automático**: Canvas para arte grande (>100 líneas)
 - **Tree-shaking**: Importa solo lo que uses
 
@@ -587,7 +590,7 @@ Framework-independent library for creating stunning ASCII art animations in the 
 - **Rich Effects** - Wave, color-cycle, glitch, scramble, typewriter, matrix rain, and more
 - **Ready-to-use Presets** - Pre-configured effect combinations (hologram, rainbow, terminal, decrypt)
 - **Tiny Bundle** - ~5kb core + lazy-loaded effects (3-5kb each)
-- **60fps Performance** - GPU-accelerated via CSS transforms, canvas fallback for large art
+- **60fps Performance** - GPU-accelerated via `will-change` + opaque canvas, auto-pauses on hidden tabs and off-screen elements
 - **Framework-Agnostic** - Pure JavaScript, works with React, Vue, Svelte, or vanilla
 - **Auto-Detection** - Automatically detects and formats multi-line ASCII art
 - **Extensible** - Plugin system for custom effects
@@ -1114,7 +1117,10 @@ ascii-script/
 - **Core bundle**: ~5kb gzipped
 - **Effects**: 3-5kb each (lazy loaded)
 - **Target**: 60fps rendering
-- **GPU Acceleration**: Via CSS transforms
+- **GPU Acceleration**: Canvas with `will-change: transform` + opaque context (`alpha: false`)
+- **Tab Visibility**: Engine automatically pauses the RAF loop when the tab is hidden and resumes on focus
+- **IntersectionObserver**: Instances stop rendering when scrolled out of the viewport
+- **Zero-GC Color Cycle**: `<span>` tree built once; each frame updates only one CSS custom property
 - **Automatic fallback**: Canvas for large art (>100 lines)
 - **Tree-shaking**: Import only what you use
 

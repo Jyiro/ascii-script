@@ -865,6 +865,18 @@ bg.setCharset('·•*+#@');
 bg.setCharset(' .:-=+*#%@');
 ```
 
+### `setBackground(color)`
+
+Establecer el color de fondo del canvas. Necesario cuando se usa un contexto opaco (`alpha: false`) para que el fondo coincida con el color de la página en lugar de renderizarse negro.
+
+**Parámetros:**
+- `color` (string) - Color CSS válido (hex, rgb, hsl, named)
+
+```javascript
+bg.setBackground('#0a0a0a');      // Casi negro
+bg.setBackground('rgb(15,15,30)'); // Dark navy
+```
+
 ### `resize(cols, rows)`
 
 Redimensionar la cuadrícula.
@@ -1534,6 +1546,18 @@ bg.setCharset('·•*+#@');
 bg.setCharset(' .:-=+*#%@');
 ```
 
+### `setBackground(color)`
+
+Set the canvas background color. Required when the opaque canvas context (`alpha: false`) is used to prevent the grid background from rendering as solid black. Set this to match your page's background color.
+
+**Parameters:**
+- `color` (string) - Any valid CSS color value (hex, rgb, hsl, named)
+
+```javascript
+bg.setBackground('#0a0a0a');       // Near-black
+bg.setBackground('rgb(15,15,30)'); // Dark navy
+```
+
 ### `resize(cols, rows)`
 
 Resize the grid.
@@ -1685,9 +1709,13 @@ ascii.destroy(); // Cleans up all instances
 ### Optimizations
 
 - **Lazy Loading**: Effects load only when used
-- **GPU Acceleration**: CSS transforms accelerated by GPU
+- **GPU Acceleration**: CSS transforms accelerated by GPU; canvas promoted to its own compositor layer via `will-change: transform`
+- **Opaque Canvas Context**: `CanvasGrid` uses `{ alpha: false }` — skips per-pixel alpha blending in the compositor
 - **Canvas Fallback**: Automatic switch to canvas for large art
 - **requestAnimationFrame**: Optimized animation loop
+- **Tab Visibility**: Engine pauses the RAF loop automatically when the browser tab is hidden, and resumes on focus
+- **IntersectionObserver**: Each instance stops rendering when scrolled out of the viewport
+- **Static DOM for Color Effects**: `colorCycle` builds the `<span>` tree once; subsequent frames only update one CSS custom property (`--ascii-hue-base`) — zero DOM allocations
 - **Tree Shaking**: Only import what you use
 
 ### Performance Tips
@@ -1698,15 +1726,19 @@ const art = ascii.createArt('#logo', {
   renderMode: 'dom'    // Faster for small art (<100 lines)
 });
 
-// 2. Limit simultaneous effects
-await art.wave();      // Wait to finish
-await art.colorCycle(); // Then apply next
+// 2. Match CanvasGrid background to your page
+// (avoids a black flash when using the opaque canvas context)
+const bg = ascii.createBackground('#bg');
+bg.setBackground('#0d0d0d'); // same as your body background
 
 // 3. Adjust threshold
 const ascii = create({ threshold: 50 }); // Canvas for >50 lines
 
 // 4. Use optimized presets
 await art.preset('rainbow'); // Optimized effect combination
+
+// 5. Always destroy instances when done
+ascii.destroy(art.id); // Disconnects IntersectionObserver, removes listeners
 ```
 
 ## Compatibility

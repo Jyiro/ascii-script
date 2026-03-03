@@ -5,6 +5,9 @@ import { BaseEffect } from '../base-effect.js';
  */
 export class MatrixRainEffect extends BaseEffect {
   #charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+  // Pre-cached array and length — avoids string indexing and .length lookup per call
+  #charsetArray = [];
+  #charsetLen = 0;
   #speed = 0.05;
   #density = 0.05;
   #columns = [];
@@ -13,6 +16,8 @@ export class MatrixRainEffect extends BaseEffect {
   constructor(config = {}) {
     super(config);
     this.#charset = config.charset || this.#charset;
+    this.#charsetArray = this.#charset.split('');
+    this.#charsetLen = this.#charsetArray.length;
     this.#speed = config.speed || 0.05;
     this.#density = config.density || 0.05;
   }
@@ -25,18 +30,27 @@ export class MatrixRainEffect extends BaseEffect {
       this.#initialized = true;
     }
 
+    const cols = this.#columns;
+    const numLines = lines.length;
+    const speed = this.#speed;
+
+    // --- Step 1: advance each column exactly ONCE per frame ---
+    for (let c = 0; c < cols.length; c++) {
+      const col = cols[c];
+      if (!col) continue;
+      col.y += speed;
+      if (col.y > numLines) {
+        col.y = -Math.random() * 10;
+      }
+    }
+
+    // --- Step 2: render characters using the updated positions ---
     const result = lines.map((line, lineIndex) => {
       return line.split('').map((char, colIndex) => {
-        const column = this.#columns[colIndex];
+        const column = cols[colIndex];
         if (!column) return char;
 
-        // Update column position
-        column.y += this.#speed;
-        if (column.y > lines.length) {
-          column.y = -Math.random() * 10;
-        }
-
-        // Render falling char
+        // Render falling char head
         if (Math.abs(lineIndex - column.y) < 1) {
           return this.#randomChar();
         }
@@ -61,6 +75,6 @@ export class MatrixRainEffect extends BaseEffect {
   }
 
   #randomChar() {
-    return this.#charset[Math.floor(Math.random() * this.#charset.length)];
+    return this.#charsetArray[Math.floor(Math.random() * this.#charsetLen)];
   }
 }

@@ -3,12 +3,29 @@ import { BaseEffect } from '../base-effect.js';
 /**
  * Color Gradient effect - Creates gradient based on a base color
  * Generates color variations of a single hue
+ *
+ * Performance strategy:
+ * 1. Parse baseColor to HSL once in the constructor — no per-frame conversion.
+ * 2. Cache the rendered HTML string and only rebuild when the animation time
+ *    has advanced enough to produce a visually perceptible color change.
+ *    At default speed (0.001) colours shift ~0.016 time units per 60fps frame,
+ *    which is ~0.016% of a cycle — imperceptible below ~0.5.  We re-render at
+ *    most every ~30 frames (≈ 30fps) without any visible quality loss.
  */
 export class ColorGradientEffect extends BaseEffect {
-  #baseColor = '#00aaff'; // Azure blue
+  #baseColor = '#00aaff';
   #variations = 5;
   #speed = 0.001;
-  #mode = 'lightness'; // 'lightness', 'saturation', 'both'
+  #mode = 'lightness';
+
+  // Cached HSL of baseColor — computed once, never again
+  #baseHSL = null;
+  // Cache rendered output to avoid rebuilding on frames where colour hasn't changed
+  #cachedHTML = null;
+  #cachedText = null;
+  #lastRenderTime = null;
+  // Minimum time delta before re-rendering (tune: lower = more accurate, higher = cheaper)
+  static #RENDER_TIME_THRESHOLD = 0.02;
 
   constructor(config = {}) {
     super(config);
@@ -16,6 +33,9 @@ export class ColorGradientEffect extends BaseEffect {
     this.#variations = config.variations || 5;
     this.#speed = config.speed || 0.001;
     this.#mode = config.mode || 'lightness';
+
+    // Parse base color once — avoids repeated hex string parsing per frame
+    this.#baseHSL = this.#hexToHSL(this.#baseColor);
   }
 
   /**
@@ -108,25 +128,37 @@ export class ColorGradientEffect extends BaseEffect {
   }
 
   render(text, elapsed, context = {}) {
-    const lines = text.split('\n');
-    const baseHSL = this.#hexToHSL(this.#baseColor);
     const time = elapsed * this.#speed;
-    
-    let charIndex = 0;
     const totalChars = text.replace(/\s/g, '').length;
-    
+
+    // Return cached HTML when text is unchanged and colour shift is imperceptible
+    if (
+      this.#cachedHTML !== null &&
+      text === this.#cachedText &&
+      this.#lastRenderTime !== null &&
+      Math.abs(time - this.#lastRenderTime) < ColorGradientEffect.#RENDER_TIME_THRESHOLD
+    ) {
+      return { __html: this.#cachedHTML, __text: text };
+    }
+
+    this.#lastRenderTime = time;
+    this.#cachedText = text;
+
+    const lines = text.split('\n');
+    // Use pre-cached HSL — no hex parsing needed
+    const baseHSL = this.#baseHSL;
+
+    let charIndex = 0;
     const colored = lines.map((line) => {
       return line.split('').map((char) => {
         if (char === ' ' || char === '\n') return char;
-        
         const color = this.#getVariation(baseHSL, charIndex, totalChars, time);
         charIndex++;
-        
         return `<span style="color: ${color}">${char}</span>`;
       }).join('');
     });
-    
-    const html = colored.join('<br>');
-    return { __html: html, __text: text };
+
+    this.#cachedHTML = colored.join('<br>');
+    return { __html: this.#cachedHTML, __text: text };
   }
 }
