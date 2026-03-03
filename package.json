@@ -1,6 +1,6 @@
 {
   "name": "@jyiro/ascii-script",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Micro-librería para render y animación ASCII en el DOM",
   "type": "module",
   "main": "./dist/ascii-script.js",
